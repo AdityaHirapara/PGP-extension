@@ -6,6 +6,7 @@
     <script src="resources/js/jquery.min.js"></script>
     <script src="semantic/semantic.min.js"></script>
     <script src="resources/js/openpgp.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources/css/index.css">
   </head>
   <body>
     <!-- Main Menu -->
@@ -50,20 +51,21 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <div class="ui header center" style="margin-left: 7rem;">Generate your Keypair</div>
-                <div class="ui form">
+                <div class="ui form" id="genkeyform">
                   <div class="field">
                     <label>Name</label>
-                    <input type="text" placeholder="Joe Jonas">
+                    <input name="genname" type="text" placeholder="Joe Jonas">
                   </div>
                   <div class="field">
                     <label>E-mail</label>
-                    <input type="email" placeholder="joe@schmoe.com">
+                    <input name="genmail" type="email" placeholder="joe@schmoe.com" required>
                   </div>
                   <div class="field">
                     <label>Passphrase</label>
-                    <input type="password" placeholder="Enter passphrase for key">
+                    <input name="genpassphrase" type="password" placeholder="Enter passphrase for key" required>
                   </div>
-                  <div class="ui submit button">Generate</div>
+                  <div class="ui error message"></div>
+                  <div class="ui submit button primary" onclick="generateKeys()">Generate</div>
                 </div>
               </div>
             </div>

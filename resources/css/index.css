@@ -1,3 +1,6 @@
 .encryptButton {
   background-color: blue;
 }
+.ui.message .list:not(.ui) li:before {
+  content: ''
+}
