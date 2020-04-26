@@ -46,3 +46,44 @@ function generateKeys() {
     // openpgp generate key function
   }
 }
+
+
+
+//************************************Nirav start****************************************//
+$('#findkeyform')
+  .form({
+    fields: {
+      findname: {
+        identifier: 'findname',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter your name'
+          }
+        ]
+      },
+      findmail: {
+        identifier: 'findmail',
+        rules: [
+          {
+            type   : 'email',
+            prompt : 'Please enter valid email'
+          }
+        ]
+      },
+    }
+  })
+;
+
+function findKey() {
+  console.log('Clicked on find-key');
+  if( $('#findkeyform').form('is valid')) {
+    const name = $('input[name="findname"]').val();
+    const email = $('input[name="findmail"]').val();
+    console.log(name);
+	console.log(email);
+    // openpgp find key function
+  }
+}
+
+// ************************************Nirav End******************************************//
