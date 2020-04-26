@@ -11,13 +11,13 @@
   <body>
     <!-- Main Menu -->
     <div class="ui pointing menu">
-      <a class="active item" onclick="show('key')">
+      <a class="active item" id="keyTab">
         Key Manager
       </a>
-      <a class="item" onclick="show('encrypt')">
+      <a class="item" id="encryptTab">
         Encrypt/Sign
       </a>
-      <a class="item" onclick="show('decrypt')">
+      <a class="item" id="decryptTab">
         Decrypt/Verify
       </a>
     </div>
@@ -29,15 +29,15 @@
         <!-- Submenu -->
         <div class="two wide column">
           <div class="ui vertical fluid tabular labeled icon menu">
-            <div class="active item" onclick="keyshow('genkey')">
+            <div class="active item" id="genkeyTab">
               <i class="gamepad icon"></i>
               Generate keys
             </div>
-            <a class="item" onclick="keyshow('find')">
+            <a class="item" id="findkeyTab">
               <i class="video camera icon"></i>
               Import/Find keys
             </a>
-            <a class="item" onclick="keyshow('manage')">
+            <a class="item" id="managekeyTab">
               <i class="video play icon"></i>
               Manage keys
             </a>
@@ -65,8 +65,26 @@
                     <input name="genpassphrase" type="password" placeholder="Enter passphrase for key" required>
                   </div>
                   <div class="ui error message"></div>
-                  <div class="ui submit button primary" onclick="generateKeys()">Generate</div>
+                  <div class="ui submit button primary" id="gensubmit">Generate</div>
                 </div>
+
+                <!-- Warning modal for sending key to keyserver -->
+                <div id="keysendmodal" class="ui modal">
+                  <i class="close icon"></i>
+                  <div class="header">
+                    Confirmation
+                  </div>
+                  <div class="content">
+                    <div class="description">
+                      Do you want to send your public key to keyserver? This will be permenent action. If you are not sure, you can perform this action later under "Manage keys" tab.
+                    </div>
+                  </div>
+                  <div class="actions">
+                    <div class="ui cancel button">Cancel</div>
+                    <div class="ui approve button">Send</div>
+                  </div>
+                </div>
+                <!-- End modal -->
               </div>
             </div>
           </div>
