@@ -11,6 +11,12 @@ function show(id) {
   $(`#${id}`).show();
 }
 
+$('#keyTab').click(show.bind(this, 'key'));
+$('#encryptTab').click(show.bind(this, 'encrypt'));
+$('#decryptTab').click(show.bind(this, 'decrypt'));
+
+console.log(chrome.storage)
+
 // var pubkey = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 // Version: OpenPGP.js v2.5.1
 // Comment: http://openpgpjs.org
