@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PGP Extension</title>
+    <link rel="stylesheet" type="text/css" href="semantic/semantic.min.css">
+    <script src="resources/js/jquery.min.js"></script>
+    <script src="semantic/semantic.min.js"></script>
+    <script src="resources/js/openpgp.js"></script>
+  </head>
+  <body>
+    <!-- Main Menu -->
+    <div class="ui pointing menu">
+      <a class="active item" onclick="show('key')">
+        Key Manager
+      </a>
+      <a class="item" onclick="show('encrypt')">
+        Encrypt/Sign
+      </a>
+      <a class="item" onclick="show('decrypt')">
+        Decrypt/Verify
+      </a>
+    </div>
+    <!-- End Main Menu -->
+  
+    <!-- Start Key manager -->
+    <div id="key" class="ui segment module">
+      <div class="ui grid">
+        <!-- Submenu -->
+        <div class="two wide column">
+          <div class="ui vertical fluid tabular labeled icon menu">
+            <div class="active item" onclick="keyshow('genkey')">
+              <i class="gamepad icon"></i>
+              Generate keys
+            </div>
+            <a class="item" onclick="keyshow('find')">
+              <i class="video camera icon"></i>
+              Import/Find keys
+            </a>
+            <a class="item" onclick="keyshow('manage')">
+              <i class="video play icon"></i>
+              Manage keys
+            </a>
+          </div>
+        </div>
+        <!-- End Submenu -->
+
+        <div class="ten wide stretched column">
+          <!-- Start Generate keys -->
+          <div id="genkey" class="ui segment keymodule">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <div class="ui header center" style="margin-left: 7rem;">Generate your Keypair</div>
+                <div class="ui form">
+                  <div class="field">
+                    <label>Name</label>
+                    <input type="text" placeholder="Joe Jonas">
+                  </div>
+                  <div class="field">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="joe@schmoe.com">
+                  </div>
+                  <div class="field">
+                    <label>Passphrase</label>
+                    <input type="password" placeholder="Enter passphrase for key">
+                  </div>
+                  <div class="ui submit button">Generate</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Generate keys -->
+
+          <!-- Start Find keys -->
+          <div id="find" class="ui segment keymodule" style="display: none">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <div class="ui header center" style="margin-left: 7rem;">Find keys</div>
+                <div class="ui form">
+                  <div class="field">
+                    <label>Name</label>
+                    <input type="text" placeholder="Joe Jonas">
+                  </div>
+                  <div class="field">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="joe@schmoe.com">
+                  </div>
+                  <div class="ui submit button">Find</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Find keys -->
+
+          <!-- Start Manage keys -->
+          <div id="manage" class="ui segment keymodule" style="display: none">
+            <div class="ui grid">
+              <div class="ten wide column" style="justify-content: cemter;">
+                <div class="ui header center" style="margin-left: 7rem;">Manage keys</div>
+              </div>
+            </div>
+          </div>
+          <!-- End Manage keys -->
+        </div>
+      </div>
+    </div>
+    <!-- End Key manager -->
+
+    <!-- Start Encrypt -->
+    <div id="encrypt" class="ui segment module" style="display: none">
+      <div class="ui header">Encrypt/Sign</div>
+    </div>
+    <!-- End Encrypt -->
+
+    <!-- Start Decrypt -->
+    <div id="decrypt" class="ui segment module" style="display: none">
+      <div class="ui header">Decrypt/Verify</div>
+    </div>
+    <!-- End Decrypt -->
+
+    <script src="resources/js/index.js"></script>
+    <script src="resources/js/keymanager.js"></script>
+  </body>
+</html>

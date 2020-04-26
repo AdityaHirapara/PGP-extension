@@ -1,0 +1,31 @@
+{
+	"manifest_version": 2,
+	"name": "PGP-extension",
+	"description": "OpenPGP for novice users to secure their messages and mails",
+	"version": "1.0",
+	"icons": {
+		"128": "resources/images/icon128.png"
+	},
+	"browser_action": {
+		"default_icon": "resources/images/icon.png",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"storage"
+	],
+	"content_scripts": [{
+		"matches": [
+			"https://mail.google.com/*"
+		],
+		"js": [
+			"resources/js/inboxsdk.js",
+			"intercept.js",
+			"resources/js/openpgp.js",
+			"encrypt.js"
+		]
+	}],
+	"web_accessible_resources": [
+		"resources/images/encryptButton.png",
+		"resources/images/verified.png"
+	]
+}
