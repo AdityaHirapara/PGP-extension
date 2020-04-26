@@ -77,11 +77,7 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <div class="ui header center" style="margin-left: 7rem;">Find keys</div>
-                <div class="ui form">
-                  <div class="field">
-                    <label>Name</label>
-                    <input name ="findname" type="text" placeholder="Joe Jonas">
-                  </div>
+                <div class="ui form" id="findkeyform">
                   <div class="field">
                     <label>E-mail</label>
                     <input name="findmail" type="email" placeholder="joe@schmoe.com" required>
@@ -90,8 +86,28 @@
                   <div class="ui submit button primary" onclick = "findKey()">Find</div>
                 </div>
               </div>
+			  <div class="ten wide column">
+                <div class="ui header center" style="margin-left: 7rem;">Import Key</div>
+                <div class="ui form" id="importkeyform">
+                  <div class="field">
+                    <label>Public Key</label>
+					<textarea name="importpublickey" id="importpublickey" placeholder="Enter Public Key">
+					</textarea>
+					<br><br><label>OR<br><br></label>
+					<div>
+					<input type="file" id="files" name="pubkeyfile"/>
+					</div>
+					
+			
+                  </div>
+				  <div class= "ui error message"> </div>
+             	  <div class="ui submit button primary" onclick = "importKey()">Import</div>
+				  				  
+				</div>
+              </div>
             </div>
           </div>
+		  
           <!-- End Find keys -->
 
           <!-- Start Manage keys -->
