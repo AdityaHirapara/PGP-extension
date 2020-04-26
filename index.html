@@ -30,15 +30,21 @@
         <div class="two wide column">
           <div class="ui vertical fluid tabular labeled icon menu">
             <div class="active item" id="genkeyTab">
-              <i class="gamepad icon"></i>
+              <center>
+                <img width="50px" height="50px" src="resources/images/genkey.png"></img>
+              </center>
               Generate keys
             </div>
             <a class="item" id="findkeyTab">
-              <i class="video camera icon"></i>
+              <center>
+                <img width="55px" height="55px" src="resources/images/fetchkey1.png"></img>
+              </center>
               Import/Find keys
             </a>
             <a class="item" id="managekeyTab">
-              <i class="video play icon"></i>
+              <center>
+                <img width="50px" height="50px" src="resources/images/manage.png"></img>
+              </center>
               Manage keys
             </a>
           </div>
@@ -100,28 +106,25 @@
                     <label>E-mail</label>
                     <input name="findmail" type="email" placeholder="joe@schmoe.com" required>
                   </div>
-				  <div class= "ui error message"> </div>
+				          <div class= "ui error message"> </div>
                   <div class="ui submit button primary" onclick = "findKey()">Find</div>
                 </div>
               </div>
-			  <div class="ten wide column">
+			        <div class="ten wide column">
                 <div class="ui header center" style="margin-left: 7rem;">Import Key</div>
                 <div class="ui form" id="importkeyform">
                   <div class="field">
                     <label>Public Key</label>
-					<textarea name="importpublickey" id="importpublickey" placeholder="Enter Public Key">
-					</textarea>
-					<br><br><label>OR<br><br></label>
-					<div>
-					<input type="file" id="files" name="pubkeyfile"/>
-					</div>
-					
-			
+                    <textarea name="importpublickey" id="importpublickey" placeholder="Enter Public Key">
+                    </textarea>
+                    <br><br><label>OR<br><br></label>
+                    <div>
+                      <input type="file" id="files" name="pubkeyfile"/>
+                    </div>
                   </div>
-				  <div class= "ui error message"> </div>
-             	  <div class="ui submit button primary" onclick = "importKey()">Import</div>
-				  				  
-				</div>
+				          <div class= "ui error message"> </div>
+             	    <div class="ui submit button primary" onclick = "importKey()">Import</div>
+				        </div>
               </div>
             </div>
           </div>
@@ -130,8 +133,8 @@
 
           <!-- Start Manage keys -->
           <div id="manage" class="ui segment keymodule" style="display: none">
-            <div class="ui grid">
-              <div class="ten wide column" style="justify-content: cemter;">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
                 <div class="ui header center" style="margin-left: 7rem;">Manage keys</div>
               </div>
             </div>
@@ -143,18 +146,146 @@
     <!-- End Key manager -->
 
     <!-- Start Encrypt -->
-    <div id="encrypt" class="ui segment module" style="display: none">
-      <div class="ui header">Encrypt/Sign</div>
+    <div id="encrypt" class="ui segment module" style="display: none;">
+      <div class="ui grid">
+        <!-- Submenu -->
+        <div class="two wide column">
+          <div class="ui vertical fluid tabular labeled icon menu">
+            <div class="active item" id="encTab">
+              <center>
+                <img width="50px" height="50px" src="resources/images/encrypt1.png"></img>
+              </center>
+              Encrypt
+            </div>
+            <a class="item" id="signTab">
+              <center>
+                <img width="60px" height="50px" src="resources/images/sign1.png"></img>
+              </center>
+              Sign
+            </a>
+            <a class="item" id="encsignTab">
+              <center>
+                <img width="55px" height="50px" src="resources/images/encsign1.png"></img>
+              </center>
+              Encrypt & Sign
+            </a>
+          </div>
+        </div>
+        <!-- End submenu -->
+
+        <div class="ten wide stretched column">
+          <!-- Start Encrypt -->
+          <div id="encModule" class="ui segment encmodule">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <center>
+                  <div class="ui header center">Encrypt your Message</div>
+                </center>
+              </div>
+            </div>
+          </div>
+          <!-- End Encrypt -->
+
+          <!-- Start Sign -->
+          <div id="sign" class="ui segment encmodule" style="display: none">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <center>
+                  <div class="ui header center">Sign your Message</div>
+                </center>
+              </div>
+            </div>
+          </div>
+          <!-- End Sign -->
+
+          <!-- Start Encrypt & sign -->
+          <div id="encsign" class="ui segment encmodule" style="display: none">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <center>
+                  <div class="ui header center">Encrypt & Sign your Message</div>
+                </center>
+              </div>
+            </div>
+          </div>
+          <!-- End Encrypt & sign -->
+        </div>
+      </div>
     </div>
     <!-- End Encrypt -->
 
     <!-- Start Decrypt -->
     <div id="decrypt" class="ui segment module" style="display: none">
-      <div class="ui header">Decrypt/Verify</div>
+      <div class="ui grid">
+        <!-- Submenu -->
+        <div class="two wide column">
+          <div class="ui vertical fluid tabular labeled icon menu">
+            <div class="active item" id="decTab">
+              <center>
+                <img width="50px" height="50px" src="resources/images/decrypt1.png"></img>
+              </center>
+              Decrypt
+            </div>
+            <a class="item" id="verifyTab">
+              <center>
+                <img width="60px" height="50px" src="resources/images/verify.png"></img>
+              </center>
+              Verify
+            </a>
+            <a class="item" id="decverTab">
+              <center>
+                <img width="50px" height="50px" src="resources/images/decver.png"></img>
+              </center>
+              Decrypt & Verify
+            </a>
+          </div>
+        </div>
+        <!-- End submenu -->
+
+        <div class="ten wide stretched column">
+          <!-- Start Encrypt -->
+          <div id="decModule" class="ui segment decmodule">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <center>
+                  <div class="ui header center">Decrypt your Message</div>
+                </center>
+              </div>
+            </div>
+          </div>
+          <!-- End Encrypt -->
+
+          <!-- Start Sign -->
+          <div id="verify" class="ui segment decmodule" style="display: none">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <center>
+                  <div class="ui header center">Verify your Message</div>
+                </center>
+              </div>
+            </div>
+          </div>
+          <!-- End Sign -->
+
+          <!-- Start Encrypt & sign -->
+          <div id="decver" class="ui segment decmodule" style="display: none">
+            <div class="ui grid" style="justify-content: center;">
+              <div class="ten wide column">
+                <center>
+                  <div class="ui header center">Decrypt & Verify your Message</div>
+                </center>
+              </div>
+            </div>
+          </div>
+          <!-- End Encrypt & sign -->
+        </div>
+      </div>
     </div>
     <!-- End Decrypt -->
 
     <script src="resources/js/index.js"></script>
     <script src="resources/js/keymanager.js"></script>
+    <script src="resources/js/encryptSign.js"></script>
+    <script src="resources/js/decryptVerify.js"></script>
   </body>
 </html>

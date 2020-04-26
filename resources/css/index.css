@@ -4,3 +4,7 @@
 .ui.message .list:not(.ui) li:before {
   content: ''
 }
+.ui.segment {
+  margin-top: 0;
+  margin-bottom: 0;
+}
