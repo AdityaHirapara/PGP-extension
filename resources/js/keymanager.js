@@ -159,34 +159,37 @@ chrome.storage.local.get(function(keys) {
   var pubList = document.getElementById("pubEmail");
   var pubPrivList = document.getElementById("pubPrivEmail");
   for(var key in keys) {
+    var id = key.replace('@','-at-').replace('.','-dot-');
     // Set x button
     xbutton = document.createElement("button");
     xbutton.innerHTML = "&#10006;";
     xbutton.style.display = "inline";
     xbutton.style.margin = "5px";
     xbutton.onclick = removeKey;
-    xbutton.id = key;
+    xbutton.id = id;
     xbutton.className = "btn btn-danger btn-xs"
 
     // Set edit button
-    editButton = document.createElement("button");
-    editButton.innerHTML = "&#9998;";
-    editButton.style.display = "inline";
-    editButton.style.margin = "5px";
+    //editButton = document.createElement("button");
+    // editButton.innerHTML = "&#9998;";
+    // editButton.style.display = "inline";
+    // editButton.style.margin = "5px";
     //editButton.onclick = editKey;
-    //editButton.id = key;
-    editButton.className = "btn btn-warning btn-xs"
+    // editButton.id = id;
+    // editButton.className = "btn btn-warning btn-xs"
 
     // Set url
     p = document.createElement('p');
     p.style.display = "inline";
     p.innerText += keys[key].name + " (" + key + ")";
+    p.id = id;
 
     // Stick inside div
     div = document.createElement("div")
     div.appendChild(xbutton);
-    div.appendChild(editButton);
+    //div.appendChild(editButton);
     //div.appendChild(exportButton);
+    div.id = id;
     div.appendChild(p);
 
     if(keys[key].privKey == undefined) {
@@ -205,11 +208,11 @@ chrome.storage.local.get(function(keys) {
 
 function removeKey() {
 	var button = event.target;
-  console.log(button.id);
-  
-  // chrome.storage.local.remove(button.id);
-  // $('#trial').remove();
-  $(button.id).remove();
+  var hash = "#";
+  var email = button.id.replace('-at-','@').replace('-dot-','.');
+  chrome.storage.local.remove(email);
+  console.log(email);
+  $(hash.concat(button.id)).remove();
 }
 
 
