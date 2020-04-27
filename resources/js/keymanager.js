@@ -106,6 +106,7 @@ function generateKeys() {
 //************************************Nirav start****************************************//
 
 $("#importkeybutton").click(importKey);
+$("#findkeybutton").click(findKey);
 $('#findkeyform')
   .form({
     fields: {
