@@ -205,6 +205,8 @@ chrome.storage.local.get(function(keys) {
 
 function removeKey() {
 	var button = event.target;
+  console.log(button.id);
+  
   // chrome.storage.local.remove(button.id);
   // $('#trial').remove();
   $(button.id).remove();
