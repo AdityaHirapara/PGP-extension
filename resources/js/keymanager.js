@@ -145,25 +145,72 @@ function storeKey(name, email, pubKey) {
 	};
 	chrome.storage.local.set(details, function() {
 		console.log("Stored key at", email);
-    console.log(chrome.storage);
     //window.location.reload();
 	});
 }
 
-
+//storeKey('kiran','kiran@gmail.com','pubkiranbogus');
+//storeKey('maran','maran@gmail.com','pubmaranbogus');
+//storeKey('3maran','3maran@gmail.com','3pubmaranbogus');
+//storeKey('4maran','4maran@gmail.com','4pubmaranbogus');
 pubkeyarr=[];
 pubprivkeyarr=[];
 chrome.storage.local.get(function(keys) {
+  var pubList = document.getElementById("pubEmail");
+  var pubPrivList = document.getElementById("pubPrivEmail");
   for(var key in keys) {
+    // Set x button
+    xbutton = document.createElement("button");
+    xbutton.innerHTML = "&#10006;";
+    xbutton.style.display = "inline";
+    xbutton.style.margin = "5px";
+    xbutton.onclick = removeKey;
+    xbutton.id = key;
+    xbutton.className = "btn btn-danger btn-xs"
+
+    // Set edit button
+    editButton = document.createElement("button");
+    editButton.innerHTML = "&#9998;";
+    editButton.style.display = "inline";
+    editButton.style.margin = "5px";
+    //editButton.onclick = editKey;
+    //editButton.id = key;
+    editButton.className = "btn btn-warning btn-xs"
+
+    // Set url
+    p = document.createElement('p');
+    p.style.display = "inline";
+    p.innerText += keys[key].name + " (" + key + ")";
+
+    // Stick inside div
+    div = document.createElement("div")
+    div.appendChild(xbutton);
+    div.appendChild(editButton);
+    //div.appendChild(exportButton);
+    div.appendChild(p);
+
     if(keys[key].privKey == undefined) {
       pubkeyarr.push(key);
+      pubList.appendChild(div);
     } else {
       pubprivkeyarr.push(key);
+      pubPrivList.appendChild(div);
     }
   }
   console.log('pubkeyarr ',pubkeyarr);
   console.log('pubprivkeyarr ',pubprivkeyarr);
+
 });
+
+
+function removeKey() {
+	var button = event.target;
+  // chrome.storage.local.remove(button.id);
+  // $('#trial').remove();
+  $(button.id).remove();
+}
+
+
 
 function findKey() {
 	console.log('Clicked on Find button')

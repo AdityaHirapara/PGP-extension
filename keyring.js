@@ -221,8 +221,9 @@ function setEmailList() {
 			div.appendChild(xbutton);
 			div.appendChild(editButton);
 			div.appendChild(exportButton);
-            div.appendChild(p);
+      div.appendChild(p);
 
+			
 			if(keys[key].privKey !== undefined) {
 				privList.appendChild(div);
 			} else {
