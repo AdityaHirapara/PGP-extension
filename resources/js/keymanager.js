@@ -65,6 +65,7 @@ function storeKeyPair(name, email, pubKey, privKey) {
 	var details = {};
 	details[email] = {
 		"name": name,
+    "email" : email,
 		"pubKey": pubKey,
 		"privKey": privKey
 	};
@@ -73,12 +74,12 @@ function storeKeyPair(name, email, pubKey, privKey) {
 		$('#keysendmodal').modal({
       onApprove : function() {
         const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
-        hkp.upload(pubKey).then(function(l) { 
+        hkp.upload(pubKey).then(function(l) {
           console.log(l)
           var options = {
             query: email
           };
-        
+
           hkp.lookup(options).then(async function(key) {
               var pub = await openpgp.key.readArmored(key);
               console.log(key);
@@ -104,6 +105,7 @@ function generateKeys() {
 
 //************************************Nirav start****************************************//
 
+$("#importkeybutton").click(importKey);
 $('#findkeyform')
   .form({
     fields: {
@@ -138,13 +140,30 @@ function storeKey(name, email, pubKey) {
 	var details = {};
 	details[email] = {
 		"name": name,
-		"pubKey": pubKey
+    "email": email,
+		"pubKey": pubKey,
 	};
 	chrome.storage.local.set(details, function() {
 		console.log("Stored key at", email);
-		window.location.reload();
+    console.log(chrome.storage);
+    //window.location.reload();
 	});
 }
+
+
+pubkeyarr=[];
+pubprivkeyarr=[];
+chrome.storage.local.get(function(keys) {
+  for(var key in keys) {
+    if(keys[key].privKey == undefined) {
+      pubkeyarr.push(key);
+    } else {
+      pubprivkeyarr.push(key);
+    }
+  }
+  console.log('pubkeyarr ',pubkeyarr);
+  console.log('pubprivkeyarr ',pubprivkeyarr);
+});
 
 function findKey() {
 	console.log('Clicked on Find button')
@@ -153,7 +172,7 @@ function findKey() {
 		var email = $('input[name="findmail"]').val();
 		var hkp = new openpgp.HKP('https://keyserver.ubuntu.com/');
 		var options = {
-			query: email 
+			query: email
 		};
 		hkp.lookup(options).then(async function(key) {
 			var publicKey = await openpgp.key.readArmored(key);
@@ -182,8 +201,8 @@ function handleFileSelect(evt) {
 }
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
-  
-  
+
+
 async function importKey() {
 	console.log('Clicked on Import Public Key button')
 	if( $('#importkeyform').form('is valid')) {
