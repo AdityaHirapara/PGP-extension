@@ -279,7 +279,7 @@ function revoke(email) {
   $('#revokekeymodal').modal({
     onApprove: function() {
       chrome.storage.local.get(email, async function(details) {
-        console.log(details[email].pubKey)
+        // console.log(details[email].pubKey)
         var options = {
           key: (await openpgp.key.readArmored(details[email].pubKey)).keys[0],
           revocationCertificate: details[email].revocationCert
@@ -287,13 +287,15 @@ function revoke(email) {
         openpgp.revokeKey(options).then(function(key) {
           console.log(key)
           var pubkey = key.publicKeyArmored;
+          console.log(pubkey)
           const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
           hkp.upload(pubkey).then(function(l) {
             console.log(l)
             details[email].revoked = true;
             details[email].pubKey = pubkey;
             chrome.storage.local.set(details, function() {
-              window.location.reload();
+              // window.location.reload();
+              fetchAnyKey(email)
             });
           });
         });
@@ -301,6 +303,19 @@ function revoke(email) {
     },
   }).modal('show');
 }
+function fetchAnyKey(email) {
+  const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
+
+  var options = {
+    query: email
+  };
+  hkp.lookup(options).then(async function(key) {
+    var publicKey = await openpgp.key.readArmored(key);
+    console.log(publicKey)
+    console.log(key)
+  });
+}
+fetchAnyKey('dummy634578923@gmail9.com');
 
 function deletePair(email) {
   //only if revoked
