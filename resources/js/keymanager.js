@@ -383,6 +383,10 @@ chrome.storage.local.get(function(keys) {
       $(`#${id}-prop`).click(showPairProperty.bind(this, key));
     }
   }
+
+  $('.icon.button')
+  .popup()
+  ;
   console.log('pubkeyarr ',pubkeyarr);
   console.log('pubprivkeyarr ',pubprivkeyarr);
 
