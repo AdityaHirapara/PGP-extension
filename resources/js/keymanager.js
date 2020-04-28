@@ -172,14 +172,7 @@ function storeKey(name, email, pubKey, primaryKey) {
 	});
 }
 
-function removeKey() {
-	var button = event.target;
-  var hash = "#";
-  var email = button.id.replace('-at-','@').replace('-dot-','.');
-  chrome.storage.local.remove(email);
-  console.log(email);
-  $(hash.concat(button.id)).remove();
-}
+
 
 function findKey() {
 	console.log('Clicked on Find button')
@@ -269,23 +262,69 @@ function downloadKeyPair(email) {
 }
 
 function showPairProperty(email) {
-  window.alert(email)
+    $('#properties').empty()
+                    .append("<div> Email: "+email+"</div>")
+                    .append("<div> Name: "+pubprivkeyarr[email].name+"</div>")
+                    .append("<div> keyID: "+pubprivkeyarr[email].keyId+"</div>")
+                    .append("<div> Creation Time:"+pubprivkeyarr[email].creation+"</div>")
+                    .append("<div> Algorithm:"+pubprivkeyarr[email].algorithm+"</div>")
+                    .append("<div> Size: "+pubprivkeyarr[email].size+"</div>")
+                    .append("<div> Revoke: "+pubprivkeyarr[email].revoke+"</div>")
+                    .append("<div> Sent: "+pubprivkeyarr[email].sent+"</div>");
+    $('#propmodal').modal('show');
 }
 
 function downloadPubKey(email) {
   window.alert(email)
 }
 
+var details = {};
+var email = 'prac@yaho.com'
+details[email] = {
+  "name": email,
+  "email": email,
+  "pubKey": 'why',
+  "keyId": '0x',
+  "creation": 'mondya',
+  "algorithm": 'sha',
+  "size": '5',
+};
+// chrome.storage.local.set(details, function() {
+//   console.log("Stored key at", email);
+//   // window.location.reload();
+// });
+
 function deletePubKey(email) {
-  window.alert(email)
+  // chrome.storage.local.remove(email);
+  // console.log(email);
+  $('#deletekeyprop').empty()
+                  .append("<div> Do you want to remove public key of "+email+"</div>");
+  $('#deletekeymodal').modal({
+    onApprove: function(email) {
+      console.log(email);
+    },
+    onDeny: function(email) {
+      console.log(email);
+    }
+  }).modal('show');
+  // var id = "#"+email.replace("@","-at-").replace(".","-dot-")+"-div";
+  // $(id).remove();
+  // window.alert('Public Key of '+email+' is removed Successfully');
 }
 
 function showKeyProperty(email) {
-  window.alert(email)
+  $('#properties').empty()
+                  .append("<div> Email: "+email+"</div>")
+                  .append("<div> Name: "+pubkeyarr[email].name+"</div>")
+                  .append("<div> keyID: "+pubkeyarr[email].keyId+"</div>")
+                  .append("<div> Creation Time:"+pubkeyarr[email].creation+"</div>")
+                  .append("<div> Algorithm:"+pubkeyarr[email].algorithm+"</div>")
+                  .append("<div> Size: "+pubkeyarr[email].size+"</div>");
+  $('#propmodal').modal('show');
 }
 
 function generatePrivElement(email, name, id, sent, revoked) {
-  return `<div class="ui grid keyItem" style="align-items: center; border-bottom: .3px solid #d2d2d2;">
+  return `<div id="${id}-div" class="ui grid keyItem" style="align-items: center; border-bottom: .3px solid #d2d2d2;">
     <div class="ten wide column" style="display: flex;align-items: center;">
       <img height="30px" src="resources/images/privatekey.png" style="padding-right: 5px;">
       ${name} (${email})
@@ -322,7 +361,7 @@ function generatePrivElement(email, name, id, sent, revoked) {
 }
 
 function generatePubElement(email, name, id) {
-  return `<div class="ui grid keyItem" style="align-items: center; border-bottom: .3px solid #d2d2d2;">
+  return `<div id="${id}-div"  class="ui grid keyItem" style="align-items: center; border-bottom: .3px solid #d2d2d2;">
     <div class="twelve wide column" style="display: flex;align-items: center;">
       <img height="30px" src="resources/images/publickey.png" style="padding-right: 5px;">
       ${name} (${email})
@@ -355,13 +394,12 @@ chrome.storage.local.get(function(keys) {
   var pubPrivList = document.getElementById("pubPrivEmail");
   for(var key in keys) {
     var id = key.replace('@','-at-').replace('.','-dot-');
-
     if(keys[key].privKey == undefined) {
       var listItem = generatePubElement(key, keys[key].name, id);
       var container = document.createElement("div");
       container.innerHTML = listItem;
 
-      pubkeyarr.push(key);
+      pubkeyarr[key]=keys[key];
       pubList.appendChild(container);
 
       $(`#${id}-download`).click(downloadPubKey.bind(this, key));
@@ -371,8 +409,7 @@ chrome.storage.local.get(function(keys) {
       var listItem = generatePrivElement(key, keys[key].name, id, keys[key].sent, keys[key].revoked);
       var container = document.createElement("div");
       container.innerHTML = listItem;
-
-      pubprivkeyarr.push(key);
+      pubprivkeyarr[key] = keys[key];
       pubPrivList.appendChild(container);
 
       $(`#${id}-send`).click(send.bind(this, key));
