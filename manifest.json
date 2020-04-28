@@ -4,10 +4,10 @@
 	"description": "OpenPGP for novice users to secure their messages and mails",
 	"version": "1.0",
 	"icons": {
-		"128": "resources/images/icon128.png"
+		"128": "resources/images/main.png"
 	},
 	"browser_action": {
-		"default_icon": "resources/images/icon.png",
+		"default_icon": "resources/images/main.png",
 		"default_popup": "popup.html"
 	},
 	"permissions": [

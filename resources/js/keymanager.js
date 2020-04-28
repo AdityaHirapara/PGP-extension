@@ -155,7 +155,7 @@ function storeKey(name, email, pubKey, primaryKey) {
   
 	chrome.storage.local.set(details, function() {
 		console.log("Stored key at", email);
-    // window.location.reload();
+    window.location.reload();
 	});
 }
 
@@ -296,7 +296,11 @@ function revoke(email) {
             details[email].pubKey = pubkey;
             chrome.storage.local.set(details, function() {
               // window.location.reload();
-              fetchAnyKey(email)
+              var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-revoke";
+              $(id).hide();
+              id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-remove";
+              $(id).show();
+              window.alert('Keypair revoked Successfully');
             });
           });
         });
