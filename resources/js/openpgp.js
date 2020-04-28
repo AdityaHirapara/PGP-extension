@@ -32570,7 +32570,7 @@ function HKP(keyServerBaseUrl) {
 HKP.prototype.lookup = function (options) {
   let uri = this._baseUrl + '/pks/lookup?op=get&options=mr&search=';
   const fetch = this._fetch;
-  let proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+  let proxyUrl = 'https://cors-proxy-aditya.herokuapp.com/';
   if (options.keyId) {
     uri += '0x' + encodeURIComponent(options.keyId);
   } else if (options.query) {
@@ -32600,7 +32600,7 @@ HKP.prototype.lookup = function (options) {
 HKP.prototype.upload = function (publicKeyArmored) {
   const uri = this._baseUrl + '/pks/add';
   const fetch = this._fetch;
-  const proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+  const proxyUrl = 'https://cors-proxy-aditya.herokuapp.com/'
   return fetch(proxyUrl + uri, {
     method: 'post',
     headers: {
