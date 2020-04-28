@@ -72,7 +72,7 @@ async function storeKeyPair(name, email, pubKey, privKey, revCert, primaryKey) {
     "privKey": privKey,
     "revocationCert": revCert,
     "keyId": '0x' + primaryKey.getKeyId().toHex(),
-    "creation": primaryKey.getCreationTime(),
+    "creation": primaryKey.getCreationTime().toLocaleString(),
     "algorithm": primaryKey.getAlgorithmInfo().algorithm,
     "size": primaryKey.getAlgorithmInfo().bits,
     "revoked": false,
@@ -148,10 +148,11 @@ function storeKey(name, email, pubKey, primaryKey) {
     "email": email,
     "pubKey": pubKey,
     "keyId": '0x' + primaryKey.getKeyId().toHex(),
-    "creation": primaryKey.getCreationTime(),
+    "creation": primaryKey.getCreationTime().toLocaleString(),
     "algorithm": primaryKey.getAlgorithmInfo().algorithm,
     "size": primaryKey.getAlgorithmInfo().bits,
-	};
+  };
+  
 	chrome.storage.local.set(details, function() {
 		console.log("Stored key at", email);
     // window.location.reload();
@@ -315,7 +316,6 @@ function fetchAnyKey(email) {
     console.log(key)
   });
 }
-fetchAnyKey('dummy634578923@gmail9.com');
 
 function deletePair(email) {
   //only if revoked
@@ -349,14 +349,15 @@ function downloadKeyPair(email) {
 }
 
 function showPairProperty(email) {
+  console.log(pubprivkeyarr[email].creation)
     $('#properties').empty()
                     .append("<div> Email: "+email+"</div>")
                     .append("<div> Name: "+pubprivkeyarr[email].name+"</div>")
                     .append("<div> keyID: "+pubprivkeyarr[email].keyId+"</div>")
-                    .append("<div> Creation Time:"+pubprivkeyarr[email].creation+"</div>")
-                    .append("<div> Algorithm:"+pubprivkeyarr[email].algorithm+"</div>")
+                    .append("<div> Creation Time: "+pubprivkeyarr[email].creation+"</div>")
+                    .append("<div> Algorithm: "+pubprivkeyarr[email].algorithm+"</div>")
                     .append("<div> Size: "+pubprivkeyarr[email].size+"</div>")
-                    .append("<div> Revoke: "+pubprivkeyarr[email].revoke+"</div>")
+                    .append("<div> Revoke: "+pubprivkeyarr[email].revoked+"</div>")
                     .append("<div> Sent: "+pubprivkeyarr[email].sent+"</div>");
     $('#propmodal').modal('show');
 }
@@ -389,8 +390,8 @@ function showKeyProperty(email) {
                   .append("<div> Email: "+email+"</div>")
                   .append("<div> Name: "+pubkeyarr[email].name+"</div>")
                   .append("<div> keyID: "+pubkeyarr[email].keyId+"</div>")
-                  .append("<div> Creation Time:"+pubkeyarr[email].creation+"</div>")
-                  .append("<div> Algorithm:"+pubkeyarr[email].algorithm+"</div>")
+                  .append("<div> Creation Time: "+pubkeyarr[email].creation+"</div>")
+                  .append("<div> Algorithm: "+pubkeyarr[email].algorithm+"</div>")
                   .append("<div> Size: "+pubkeyarr[email].size+"</div>");
   $('#propmodal').modal('show');
 }
