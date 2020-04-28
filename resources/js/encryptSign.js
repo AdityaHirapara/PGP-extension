@@ -99,13 +99,25 @@ function encMessage(message, email) {
 		};
 
 		openpgp.encrypt(options).then(function(encryptedMessage) {
-			console.log(encryptedMessage.data);
-
+      var encOutput = document.getElementById("encMsg");
+      encOutput.innerText = encryptedMessage.data;
+      $(".encMsg").show();
 		});
 	});
 }
 
+$('.encMsg').click(function () {
+  var content = document.getElementById("encMsg").innerHTML;
+  var encryptedMessage = content.replace(/<br>/g, "\n");
 
+  var $temp = $("<textarea>");
+  var brRegex = /<br\s*[\/]?>/gi;
+  $("body").append($temp);
+  $temp.val(encryptedMessage).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $('#encCopyNotify').slideDown().delay(1000).slideUp();
+});
 
 
 

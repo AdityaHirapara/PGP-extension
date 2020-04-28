@@ -191,6 +191,24 @@
                 <div id="pubEmail"></div>
               </div>
             </div>
+
+            <!-- Warning modal for revoking key -->
+            <div id="revokekeymodal" class="ui modal tiny">
+              <i class="close icon"></i>
+              <div class="header">
+                Confirmation
+              </div>
+              <div class="content">
+                <div class="description">
+                  Do you want to revoke your keypair? We will also send this action to respective keyserver. Once revoked, people won't be allowed to encrypt message with public key of this pair.
+                </div>
+              </div>
+              <div class="actions">
+                <div class="ui cancel blue button">Cancel</div>
+                <div class="ui approve red button">Revoke</div>
+              </div>
+            </div>
+            <!-- End modal -->
           </div>
           <!-- End Manage keys -->
         </div>
@@ -251,6 +269,13 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="encsubmit">Encrypt</div>
+                  <div id='encCopyNotify' class="ui mini positive message" style="display: none">
+                    <p>Encrypted Message copied to clipboard</p>
+                  </div>
+                  <div class="field encMsg" style="display: none">
+                    <div class="ui header center">Encrypted Message (click to copy)</div>
+                    <textarea id="encMsg" readonly></textarea>
+                  </div>
                 </div>
               </div>
             </div>
@@ -397,6 +422,13 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="decsubmit">Decrypt</div>
+                  <div id="decCopyNotify" class="ui mini positive message" style="display: none">
+                    <p>Message copied to clipboard</p>
+                  </div>
+                  <div class="field decMsg" style="display: none">
+                    <div class="ui header center">decrypted Message (click to copy)</div>
+                    <textarea id="decMsg" readonly></textarea>
+                  </div>
                 </div>
               </div>
             </div>

@@ -107,20 +107,6 @@ function generateKeys() {
   }
 }
 
-function download(filename, text) {
-  var pom = document.createElement('a');
-  pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  pom.setAttribute('download', filename);
-
-  pom.style.display = 'none';
-  document.body.appendChild(pom);
-
-  pom.click();
-
-  document.body.removeChild(pom);
-}
-
-
 //************************************Nirav start****************************************//
 
 $("#importkeybutton").click(importKey);
@@ -245,6 +231,20 @@ async function verifypubandsave(pubkey){
 
 // ************************************Nirav End******************************************//
 
+function download(filename, text) {
+  var pom = document.createElement('a');
+  pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  pom.setAttribute('download', filename);
+
+  pom.style.display = 'none';
+  document.body.appendChild(pom);
+
+  pom.click();
+
+  document.body.removeChild(pom);
+}
+
+
 function send(email) {
   $('#sendkeyprop').empty()
                   .append("<div> Do you want to send public key and private key pair of "+email+"?</div>");
@@ -276,7 +276,30 @@ function send(email) {
 }
 
 function revoke(email) {
-  window.alert(email)
+  $('#revokekeymodal').modal({
+    onApprove: function() {
+      chrome.storage.local.get(email, async function(details) {
+        console.log(details[email].pubKey)
+        var options = {
+          key: (await openpgp.key.readArmored(details[email].pubKey)).keys[0],
+          revocationCertificate: details[email].revocationCert
+        };
+        openpgp.revokeKey(options).then(function(key) {
+          console.log(key)
+          var pubkey = key.publicKeyArmored;
+          const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
+          hkp.upload(pubkey).then(function(l) {
+            console.log(l)
+            details[email].revoked = true;
+            details[email].pubKey = pubkey;
+            chrome.storage.local.set(details, function() {
+              window.location.reload();
+            });
+          });
+        });
+      });
+    },
+  }).modal('show');
 }
 
 function deletePair(email) {
@@ -298,11 +321,16 @@ function deletePair(email) {
 }
 
 function downloadCert(email) {
-  window.alert(email)
+  chrome.storage.local.get(email, function(details) {
+    download('revocationCertificate.asc', details[email].revocationCert);
+  });
 }
 
 function downloadKeyPair(email) {
-  window.alert(email)
+  chrome.storage.local.get(email, function(details) {
+    download('publicKey.gpg', details[email].pubKey);
+    download('privateKey.gpg', details[email].privKey);
+  });
 }
 
 function showPairProperty(email) {
@@ -319,7 +347,9 @@ function showPairProperty(email) {
 }
 
 function downloadPubKey(email) {
-  window.alert(email)
+  chrome.storage.local.get(email, function(details) {
+    download('publicKey.gpg', details[email].pubKey);
+  });
 }
 
 function deletePubKey(email) {

@@ -90,15 +90,17 @@ function decMessage(encMessage, email, password) {
 	chrome.storage.local.get(email,async function(details){
 		const privateKey =(await openpgp.key.readArmored(details[email].privKey)).keys[0];
 
-		decryptKey(privateKey, password).then(function(decryptedKey){
+		decryptKey(privateKey, password).then(async function(decryptedKey){
       const decryptedkey = decryptedKey.key;
 			var option = {
-				message: openpgp.message.readArmored(encMessage),
-				privateKey: decryptedkey
+				message: await openpgp.message.readArmored(encMessage),
+				privateKeys: decryptedkey
 			};
 
 			openpgp.decrypt(option).then(function(output){
-				console.log("decrypted message = ",output.data);
+        var decOutput = document.getElementById("decMsg");
+        decOutput.innerText = output.data;
+        $(".decMsg").show();
 			});
 		});
 	});
@@ -112,6 +114,20 @@ function decryptKey(privatekey, password) {
 
 	return openpgp.decryptKey(options);
 }
+
+$('.decMsg').click(function () {
+  var content = document.getElementById("decMsg").innerHTML;
+  var decryptedMessage = content.replace(/<br>/g, "\n");
+
+  var $temp = $("<textarea>");
+  var brRegex = /<br\s*[\/]?>/gi;
+  $("body").append($temp);
+  $temp.val(decryptedMessage).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $('#decCopyNotify').slideDown().delay(1000).slideUp();
+});
+
 
 //verify
 
@@ -159,7 +175,7 @@ function verMessage(message, email) {
 
 		const pubkey = (await openpgp.key.readArmored(details[email].pubKey)).keys[0];
 	    var options = {
-			message: await openpgp.message.readArmored(message),
+			message: await openpgp.cleartext.readArmored(message),
 			publicKeys: pubkey
 		};
 		openpgp.verify(options).then(function(verifyMessage) {
@@ -219,12 +235,12 @@ $('#decverform')
   })
 ;
 
-
+$("#decsignsubmit").click(decryptsignMessage);
 
 
 function decryptsignMessage() {
-	if( $('#decform').form('is valid')) {
-
+	if( $('#decverform').form('is valid')) {
+console.log("here");
     const user = $('input[name="decsignUser"]').val();
     const message = $('textarea[name="encryptedsignMessage"]').val();
     const password = $('input[name="decsignpassphrase"]').val();
@@ -236,24 +252,25 @@ function decryptsignMessage() {
 
 function decsignMessage(encsignedMessage, user, password,sender) {
   var pubkey;
+  console.log("here");
   chrome.storage.local.get(sender,async function(details){
 
 		pubkey = (await openpgp.key.readArmored(details[sender].pubKey)).keys[0];
-  });
+
+
 	chrome.storage.local.get(user,async function(details){
 		const privateKey =(await openpgp.key.readArmored(details[user].privKey)).keys[0];
-
+console.log(privateKey);
 		decryptKey(privateKey, password).then(async function(decryptedKey){
       const decryptedkey = decryptedKey.key;
 			var option = {
-				message:await openpgp.message.readArmored(encMessage),
-				privateKey: decryptedkey,
+				message:await openpgp.message.readArmored(encsignedMessage),
+				privateKeys: decryptedkey,
         publicKeys: pubkey
 			};
 
-			openpgp.decrypt(option).then(function(output){
-				console.log("decrypted message = ",output.data);
-			});
+			console.log(await openpgp.decrypt(option).then(plaintext => plaintext.data))  ;
 		});
+    });
 	});
 }
