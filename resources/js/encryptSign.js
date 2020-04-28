@@ -54,8 +54,7 @@ $("#encsubmit").click(encryptMessage);
 function encryptMessage() {
   if( $('#encform').form('is valid')) {
     
-    // const email = $('input[name="recipient"]').val();
-    const email = "rajdetroja@gmail.com";
+    const email = $('input[name="recipient"]').val();
     const message = $('textarea[name="encMessage"]').val();
 
     console.log("recipient : ",email);
