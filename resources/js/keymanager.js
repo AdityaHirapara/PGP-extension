@@ -82,6 +82,7 @@ async function storeKeyPair(name, email, pubKey, privKey, revCert, primaryKey) {
 		console.log("Stored key pair at", email);
 		$('#keysendmodal').modal({
       onApprove: function() {
+        $('#sendmodalbutton').addClass('loading');
         const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
         hkp.upload(pubKey).then(function(l) {
           details[email].sent = true;
@@ -103,6 +104,7 @@ function generateKeys() {
     const email = $('input[name="genmail"]').val();
     const passphrase = $('input[name="genpassphrase"]').val();
 
+    $('#gensubmit').addClass('loading');
     newKeyPair(name, email, passphrase);
   }
 }
@@ -155,6 +157,7 @@ function storeKey(name, email, pubKey, primaryKey) {
   
 	chrome.storage.local.set(details, function() {
 		console.log("Stored key at", email);
+    $('#findkeybutton').removeClass('loading');
     window.location.reload();
 	});
 }
@@ -164,7 +167,9 @@ function storeKey(name, email, pubKey, primaryKey) {
 function findKey() {
 	console.log('Clicked on Find button')
 	if( $('#findkeyform').form('is valid')) {
-		var email = $('input[name="findmail"]').val();
+    var email = $('input[name="findmail"]').val();
+    $('#findkeybutton').addClass('loading');
+
 		var hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
 		var options = {
 			query: email
@@ -218,10 +223,10 @@ async function verifypubandsave(pubkey){
 		for (i = 0; i < userid.length-1; i++) {
 			name += userid[i] + " ";
 		}
-		email = userid[userid.length-1];
+		email = userid[userid.length-1].replace('<', '').replace('>', '');
 		console.log('Name from public key: ',name);
 		console.log('Email from public key: ',email);
-		storeKey(name, email, key);
+		storeKey(name, email, key, pubKey.keys[0].primaryKey);
 		alert('Your Public Key stored Successfully');
 	}catch(err){
 		alert('Invalid Public Key');
@@ -248,7 +253,7 @@ function download(filename, text) {
 
 function send(email) {
   $('#sendkeyprop').empty()
-                  .append("<div> Do you want to send public key and private key pair of "+email+"?</div>");
+                  .append("<div> Do you want to send public key of "+email+" to Keyserver?</div>");
   $('#sendkeymodal').modal({
     onApprove: function() {
       const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
