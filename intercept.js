@@ -4,7 +4,7 @@ InboxSDK.load('1.0', 'sdk_PGPmail_b4932b6799').then(function(sdk) {
 		var div = document.createElement("div");
 		div.id = "passphrasePopup";
 		div.style = "z-index: 99; \
-                     width: 200px; \
+                     width: 230px; \
                      height: 80px; \
                      padding: 10px 10px 30px 10px; \
                      background-color: #f1f1f1; \
@@ -59,9 +59,15 @@ InboxSDK.load('1.0', 'sdk_PGPmail_b4932b6799').then(function(sdk) {
 					var pubKeys = [];
 					// Create list of public keys the message is to be sent to
 					for(var i = 0; i < address.length; i++) {
+						if (!keys[address[i].emailAddress]) {
+							return window.alert(`Please fetch public key of "${address[i].emailAddress}" first! Click on extension icon on addressbar.`);
+						}
 						pubKeys = pubKeys.concat(keys[address[i].emailAddress].pubKey);
 					}
 
+					if (!keys[sdk.User.getEmailAddress()]) {
+						return window.alert(`Please generate keypair for "${sdk.User.getEmailAddress()}" first! Click on extension icon on addressbar.`);
+					}
 					// Fire password prompt for signing the message
 					passwordPrompt(function() {
 						var passphrase = document.getElementById("pgpPassphrase").value;
@@ -80,8 +86,8 @@ InboxSDK.load('1.0', 'sdk_PGPmail_b4932b6799').then(function(sdk) {
 										// Auto send
 									    composeView.setBodyHTML(html);
 									    composeView.send();
-									});
-							});
+									}).catch(e => window.alert("Something went wrong!"));
+							}).catch(e => window.alert("Invalid passphrase!"));
 					});
 				});
 			}
@@ -125,55 +131,85 @@ InboxSDK.load('1.0', 'sdk_PGPmail_b4932b6799').then(function(sdk) {
 		var messageViews = threadView.getMessageViewsAll();
 		for(var i = 0; i < messageViews.length; i++) {
 			messageViews[i].on("load", function(event) {
-				// Decrypt button if the message has armors
-				event.messageView.addToolbarButton({
-					section: sdk.Conversations.MessageViewToolbarSectionNames.MORE,
-					title: "Decrypt",
-					iconClass: "decryptButton",
-					iconUrl: chrome.extension.getURL("resources/images/encryptButton.png"),
-					onClick: function(clickEvent) {
+				// Add button conditionally
+				var message = event.messageView.getBodyElement();
+				var rawMessage = message.textContent || message.innerText || "";
+				var isEncrypted = /-----BEGIN PGP MESSAGE-----(.*\n)*-----END PGP MESSAGE-----/g;
+				// Check for armor
+				if(isEncrypted.test(rawMessage)) {
+					var button = document.createElement('div');
+					button.innerHTML = "Decrypt";
+					button.id = "PGPextensionDec";
+					button.style = `display: inline-block;
+						min-height: 1em;
+						outline: 0;
+						border: none;
+						vertical-align: baseline;
+						font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+						margin: 0 .25em 0 0;
+						padding: .78571429em 1.5em .78571429em;
+						text-transform: none;
+						font-weight: 700;
+						line-height: 1em;
+						font-style: normal;
+						text-align: center;
+						text-decoration: none;
+						border-radius: .28571429rem;
+						background-color: #2185d0;
+						color: #fff;
+						text-shadow: none;
+						cursor: pointer;
+					`;
+					var html = button.outerHTML + '<br/>' + message.outerHTML;
+					document.getElementById(message.id).firstChild.innerHTML = html;
+
+					button = document.getElementById('PGPextensionDec');
+					button.addEventListener('click', function() {
 						var message = event.messageView.getBodyElement();
 						var rawMessage = message.textContent || message.innerText || "";
-						var isEncrypted = /-----BEGIN PGP MESSAGE-----(.*\n)*-----END PGP MESSAGE-----/g;
-						// Check for armor
-						if(isEncrypted.test(rawMessage)) {
-							chrome.storage.local.get(sdk.User.getEmailAddress(), function(keys) {
-								// Get password for private key
-								passwordPrompt(function() {
-									var passphrase = document.getElementById("pgpPassphrase").value;
-									document.getElementById("passphrasePopup").remove();
+						rawMessage = rawMessage.split('Decrypt').splice(1).join('');
 
-									var key = keys[sdk.User.getEmailAddress()];
-									decryptKey(key["privKey"], passphrase).then(function(decryptedKey) {
-										// Get public key of sender for verification
-										var sender = event.messageView.getSender().emailAddress;
-										chrome.storage.local.get(sender, function(keys) {
-											var sigKey = keys[sender];
-											decrypt(rawMessage, sigKey["pubKey"], decryptedKey)
-												.then(function(plaintext) {
-													var html = "";
-													// Display verified box is signing was successfully verified
-													try {
-														if(plaintext.signatures[0].valid) {
-															html += "<h4 style='background-color: #FCF8E3; border: 1px solid rgba(0, 0, 0, 0.0980392); padding: 10px'>Message has been verified <img src="+chrome.extension.getURL("resources/images/verified.png")+" style='height:15px'></h4>";
-														}
-													} catch(e) {
-														console.log("Not valid");
+						chrome.storage.local.get(sdk.User.getEmailAddress(), function(keys) {
+							// Get password for private key
+							passwordPrompt(function() {
+								var passphrase = document.getElementById("pgpPassphrase").value;
+								document.getElementById("passphrasePopup").remove();
+
+								var key = keys[sdk.User.getEmailAddress()];
+								decryptKey(key["privKey"], passphrase).then(function(decryptedKey) {
+									// Get public key of sender for verification
+									var sender = event.messageView.getSender().emailAddress;
+									chrome.storage.local.get(sender, function(keys) {
+										var sigKey = keys[sender];
+										if (!sigKey) {
+											return window.alert(`Please fetch public key of "${sender}" first! Click on extension icon on addressbar.`);
+										}
+
+										decrypt(rawMessage, sigKey["pubKey"], decryptedKey)
+											.then(function(plaintext) {
+												var html = "";
+												// Display verified box is signing was successfully verified
+												try {
+													if(plaintext.signatures[0].valid) {
+														html += "<h4 style='background-color: #FCF8E3; border: 1px solid rgba(0, 0, 0, 0.0980392); padding: 10px'>Message has been verified <img src="+chrome.extension.getURL("resources/images/verified.png")+" style='height:15px'></h4>";
 													}
-													// Display message where encrypted message was
-													var lines = plaintext.data.split("\n");
-													for(line in lines) {
-														html += lines[line] + "<br>";
-													}
-													document.getElementById(message.id).firstChild.innerHTML = html;
-												});
-										});
+												} catch(e) {
+													console.log("Not valid");
+													window.alert("Received data is corrupted!");
+												}
+												// Display message where encrypted message was
+												var lines = plaintext.data.split("\n");
+												for(line in lines) {
+													html += lines[line] + "<br>";
+												}
+												document.getElementById(message.id).firstChild.innerHTML = html;
+											}).catch(e => window.alert("Received data is corrupted!"));;
 									});
-								});
+								}).catch(e => window.alert("Invalid passphrase!"));
 							});
-						}
-					}
-				});
+						});
+					})
+				}
 			});
 		}
 	});

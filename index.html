@@ -51,7 +51,7 @@
         </div>
         <!-- End Submenu -->
 
-        <div class="ten wide stretched column">
+        <div class="twelve wide stretched column">
           <!-- Start Generate keys -->
           <div id="genkey" class="ui segment keymodule">
             <div class="ui grid" style="justify-content: center;">
@@ -134,11 +134,42 @@
           <!-- Start Manage keys -->
           <div id="manage" class="ui segment keymodule" style="display: none">
             <div class="ui grid" style="justify-content: center;">
-              <div class="ten wide column">
-                <div class="ui header center" style="margin-left: 7rem;">Users with Only Public</div>
-                <div id="pubEmail"></div>
-                  <div class="ui header center" style="margin-left: 7rem;">Users with Public and Private Key</div>
+              <div class="thirteen wide column">
+                <div id="examplePriv" class="ui grid" style="align-items: center; border-bottom: .3px solid #d2d2d2;">
+                  <div class="eight wide column" style="display: flex;align-items: center;">
+                    <img height="30px" src="resources/images/privatekey.png" style="padding-right: 5px;">
+                    Joe Jonas (joejonas@mail.com)
+                  </div>
+                  <div class="one wide column">
+                    <button class="ui compact icon blue button" data-content="Send to Keyserver">
+                      <i class="cloud upload icon"></i>
+                    </button>
+                  </div>
+                  <div class="one wide column">
+                    <button class="ui compact icon blue button" data-content="Download Keypair">
+                      <i class="download icon"></i>
+                    </button>
+                  </div>
+                  <div class="one wide column">
+                    <button class="ui compact icon blue button" data-content="Download Revocation certificate" style="padding: .3rem">
+                      <img width="24px" height="21px" src="resources/images/cert.png">
+                    </button>
+                  </div>
+                  <div class="one wide column">
+                    <button class="ui compact icon red button" data-content="Revoke your key" style="padding: .3rem">
+                      <img width="20px" src="resources/images/revoke1.png">
+                    </button>
+                  </div>
+                  <div class="one wide column">
+                    <button class="ui compact icon yellow button" data-content="See properties">
+                      <i class="list alternate white icon"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="ui header center" style="margin-left: 7rem;">Your Keypairs</div>
                 <div id="pubPrivEmail"></div>
+                <div class="ui header center" style="margin-left: 7rem;">Fetched Public keys</div>
+                <div id="pubEmail"></div>
               </div>
             </div>
           </div>
@@ -184,6 +215,24 @@
                 <center>
                   <div class="ui header center">Encrypt your Message</div>
                 </center>
+                <div class="ui form" id="encform">
+                  <div class="field">
+                    <label>Select Recipient</label>
+                    <div id="pubRecipient" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="recipient">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select Recipient</div>
+                      <div id="pubRecipientList" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Message</label>
+                    <textarea name="encMessage" id="encMessage" placeholder="Enter Message here"></textarea>
+                  </div>
+                  <div class="ui error message"></div>
+                  <div class="ui submit button primary" id="encsubmit">Encrypt</div>
+                </div>
               </div>
             </div>
           </div>
@@ -253,6 +302,28 @@
                 <center>
                   <div class="ui header center">Decrypt your Message</div>
                 </center>
+                <div class="ui form" id="decform">
+                  <div class="field">
+                    <label>Select User</label>
+                    <div id="privUser" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="decUser">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select User</div>
+                      <div id="privUserList" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Passphrase</label>
+                    <input name="decpassphrase" type="password" placeholder="Enter passphrase for selceted key" required>
+                  </div>
+                  <div class="field">
+                    <label>Encrypted Message</label>
+                    <textarea name="encryptedMessage" id="encryptedMessage" placeholder="Enter Encypted Message here"></textarea>
+                  </div>
+                  <div class="ui error message"></div>
+                  <div class="ui submit button primary" id="decsubmit">Decrypt</div>
+                </div>
               </div>
             </div>
           </div>
