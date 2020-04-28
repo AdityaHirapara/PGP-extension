@@ -8,34 +8,43 @@ $('#signTab').click(encshow.bind(this, 'sign'));
 $('#encsignTab').click(encshow.bind(this, 'encsign'));
 
 $('#pubRecipient').dropdown({});
+$('#pubRecipient2').dropdown({});
 $('#signUser').dropdown({});
+$('#encsignUser').dropdown({});
+
 
 chrome.storage.local.get(function(keys) {
   var recipientList = document.getElementById("pubRecipientList");
-  var recipientList2 = document.getElementById("pubRecipientList2");
+  var recipientList2 = document.getElementById("privRecipientList");
+  var recipientList3 = document.getElementById("pubRecipientList2");
+  var recipientList4 = document.getElementById("privRecipientList2");
   for(var key in keys) {
     div = document.createElement("div");
     div.className = "item";
     div.dataset.value=key;
     div.innerText += keys[key].name + " (" + key + ")";
+    div2 = document.createElement("div");
+    div2.className = "item";
+    div2.dataset.value=key;
+    div2.innerText += keys[key].name + " (" + key + ")";
+
 
     if(keys[key].privKey == undefined) {
       recipientList.appendChild(div);
-        //recipientList2.appendChild(div);
-    }
-  }
-  for(var key in keys) {
-    div = document.createElement("div");
-    div.className = "item";
-    div.dataset.value=key;
-    div.innerText += keys[key].name + " (" + key + ")";
+      recipientList3.appendChild(div2);
 
-    if(keys[key].privKey != undefined) {
+    }
+    else  {
       //console.log(div);
       recipientList2.appendChild(div);
+      recipientList4.appendChild(div2);
         //recipientList2.appendChild(div);
+
     }
   }
+
+
+
 });
 signform
 $('#encform')
@@ -80,17 +89,18 @@ function encryptMessage() {
 
 function encMessage(message, email) {
 
-	chrome.storage.local.get(email, async function(details){
+	chrome.storage.local.get(email,async function(details){
 
-		const pubkey = (await openpgp.key.readArmored(details[email].pubKey)).keys[0];
+		const pubkey =(await openpgp.key.readArmored(details[email].pubKey)).keys[0];
 
 	    var options = {
-			message:  openpgp.message.fromText(message),
+			message: openpgp.message.fromText(message),
 			publicKeys: pubkey
 		};
 
 		openpgp.encrypt(options).then(function(encryptedMessage) {
-      console.log(encryptedMessage.data);
+			console.log(encryptedMessage.data);
+
 		});
 	});
 }
@@ -152,12 +162,12 @@ function signmessage()
 }
 function sign(message, email,password)
 {
-  chrome.storage.local.get(email,function(details){
-    const privKey = openpgp.key.readArmored(details[email].privKey).keys[0];
+  chrome.storage.local.get(email,async function(details){
+    const privKey = (await openpgp.key.readArmored(details[email].privKey)).keys[0];
     decryptKey(privKey, password).then(function(decryptedKey){
       const decryptedkey = decryptedKey.key;
     var options = {
-    data: message,
+    message: openpgp.message.fromText(message),
     privateKeys: decryptedkey
   };
   openpgp.sign(options).then(function(signmessage) {
@@ -173,4 +183,102 @@ function decryptKey(privatekey, password) {
 	};
 
 	return openpgp.decryptKey(options);
+}
+
+
+
+//enc and sign
+
+
+
+
+
+$('#encsignform')
+  .form({
+    fields: {
+      User  : {
+        identifier: 'encSignUser',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please select User'
+          }
+        ]
+      },
+      User2  : {
+        identifier: 'recipientsign',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please select User'
+          }
+        ]
+      },
+      Signpassphrase: {
+        identifier: 'encSignpassphrase',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter passphrase'
+          }
+        ]
+      },
+      message: {
+        identifier: 'encSignMessage',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter Message'
+          }
+        ]
+      }
+    }
+  })
+;
+
+$("#encSignsubmit").click(encsignmessage);
+
+function encsignmessage()
+{
+
+  if( $('#encsignform').form('is valid'))
+  {
+    const sender = $('input[name="encSignUser"]').val();
+
+    const receiver = $('input[name="recipientsign"]').val();
+
+    const message = $('textarea[name="encSignMessage"]').val();
+    const password = $('input[name="encSignpassphrase"]').val();
+    console.log("Sender : ",sender);
+
+    console.log("Receiver : ",receiver);
+    //console.log("Sender : ",sender);
+  //  console.log("Message : ",message);
+    encsign(message, sender,receiver,password);
+  }
+}
+
+function encsign(message, sender,receiver,password){
+  var privKey;
+  //var pubkey;
+  chrome.storage.local.get(sender,async function(details){
+     privKey = (await openpgp.key.readArmored(details[sender].privKey)).keys[0];
+
+  });
+  chrome.storage.local.get(receiver,async function(details){
+     const pubkey = (await openpgp.key.readArmored(details[receiver].pubKey)).keys[0];
+
+     decryptKey(privKey, password).then(function(decryptedKey){
+       const decryptedkey = decryptedKey.key;
+       var options = {
+ 			message: openpgp.message.fromText(message),
+ 			publicKeys: pubkey,
+      privateKeys: decryptedkey
+ 		};
+ 		openpgp.encrypt(options).then(function(encsignmessage) {
+ 			console.log(encsignmessage.data);
+
+ 		});
+     });
+  });
 }

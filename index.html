@@ -272,7 +272,7 @@
                       <i class="dropdown icon"></i>
                       <input class="search" autocomplete="off" tabindex="0">
                       <div class="default text">Select User</div>
-                      <div id="pubRecipientList2" class="menu" tabindex="-1"></div>
+                      <div id="privRecipientList" class="menu" tabindex="-1"></div>
                     </div>
                   </div>
                   <div class="field">
@@ -298,6 +298,39 @@
                 <center>
                   <div class="ui header center">Encrypt & Sign your Message</div>
                 </center>
+                <div class="ui form" id="encsignform">
+                  <div class="field">
+                    <label>Select User(Sender)</label>
+                    <div id="encsignUser" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="encSignUser">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select User(Sender)</div>
+                      <div id="privRecipientList2" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Passphrase</label>
+                    <input name="encSignpassphrase" type="password" placeholder="Enter passphrase for selected key" required>
+                  </div>
+                  <div class="field">
+                    <label>Select Recipient(Receiver)</label>
+                    <div id="pubRecipient2" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="recipientsign">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select Recipient(Receiver)</div>
+                      <div id="pubRecipientList2" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>Message</label>
+                    <textarea name="encSignMessage" id="encSignMessage" placeholder="Enter Message here"></textarea>
+                  </div>
+                  <div class="ui error message"></div>
+                  <div class="ui submit button primary" id="encSignsubmit">Encrypt and Sign</div>
+                </div>
               </div>
             </div>
           </div>
@@ -407,6 +440,38 @@
                 <center>
                   <div class="ui header center">Decrypt & Verify your Message</div>
                 </center>
+                <div class="ui form" id="decverform">
+                  <div class="field">
+                    <label>Select User</label>
+                    <div id="privsignUser" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="decsignUser">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select User</div>
+                      <div id="privUserList2" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Passphrase</label>
+                    <input name="decsignpassphrase" type="password" placeholder="Enter passphrase for selceted key" required>
+                  </div>
+                  <div class="field">
+                    <label>Select Sender</label>
+                    <div id="pubsignSender" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="signsender">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select Sender</div>
+                      <div id="pubSenderList2" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Encrypted Signed Message</label>
+                    <textarea name="encryptedsignMessage" id="encryptedsignMessage" placeholder="Enter Encypted Signed Message here"></textarea>
+                  </div>
+                  <div class="ui error message"></div>
+                  <div class="ui submit button primary" id="decsignsubmit">Decrypt</div>
+                </div>
               </div>
             </div>
           </div>
