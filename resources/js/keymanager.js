@@ -168,7 +168,7 @@ function storeKey(name, email, pubKey, primaryKey) {
 	};
 	chrome.storage.local.set(details, function() {
 		console.log("Stored key at", email);
-    window.location.reload();
+    // window.location.reload();
 	});
 }
 
@@ -184,13 +184,15 @@ function findKey() {
 		};
 		hkp.lookup(options).then(async function(key) {
       var publicKey = await openpgp.key.readArmored(key);
-      console.log(publicKey)
+      console.log(key)
 			var userid = publicKey['keys'][0]['users'][0].userId['userid'].split(' ');
 			var name='';
 			for (i = 0; i < userid.length-1; i++) {
 				name += userid[i] + " ";
       }
 			storeKey(name, email, key, publicKey.keys[0].primaryKey);
+      alert('Key added Successfully');
+
 		});
 	}
 }
@@ -239,9 +241,38 @@ async function verifypubandsave(pubkey){
 	}
 }
 
+
+
 // ************************************Nirav End******************************************//
+
 function send(email) {
-  window.alert(email)
+  $('#sendkeyprop').empty()
+                  .append("<div> Do you want to send public key and private key pair of "+email+"?</div>");
+  $('#sendkeymodal').modal({
+    onApprove: function() {
+      const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
+      hkp.upload(pubprivkeyarr[email].pubKey).then(function(l) {
+        if(l['status']==200){
+          chrome.storage.local.get(email, async function(details){
+            for(var k in details){
+              details[k].sent = true;
+              chrome.storage.local.remove(email);
+              chrome.storage.local.set(details, function() {});
+              var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-send";
+              $(id).hide();
+              window.alert('Public Key sent Successfully'+k);
+              break;
+            }
+          });
+        }else{
+          console.log('Something Went wrong.!.Error code'+l['status'])
+        }
+      });
+    },
+    onDeny: function() {
+      $('#sendkeymodal').modal('hide');
+    }
+  }).modal('show');
 }
 
 function revoke(email) {
@@ -250,7 +281,20 @@ function revoke(email) {
 
 function deletePair(email) {
   //only if revoked
-  window.alert(email)
+  $('#deletekeyprop').empty()
+                  .append("<div> Do you want to remove public key and private key pair of "+email+"</div>");
+  $('#deletekeymodal').modal({
+    onApprove: function() {
+      chrome.storage.local.remove(email);
+      pubprivkeyarr[email] = null;
+      var id = "#"+email.replace("@","-at-").replace(".","-dot-")+"-div";
+      $(id).remove();
+      window.alert('Key Pair of '+email+' is removed Successfully');
+    },
+    onDeny: function() {
+      $('#deletekeymodal').modal('hide');
+    }
+  }).modal('show');
 }
 
 function downloadCert(email) {
@@ -278,38 +322,21 @@ function downloadPubKey(email) {
   window.alert(email)
 }
 
-var details = {};
-var email = 'prac@yaho.com'
-details[email] = {
-  "name": email,
-  "email": email,
-  "pubKey": 'why',
-  "keyId": '0x',
-  "creation": 'mondya',
-  "algorithm": 'sha',
-  "size": '5',
-};
-// chrome.storage.local.set(details, function() {
-//   console.log("Stored key at", email);
-//   // window.location.reload();
-// });
-
 function deletePubKey(email) {
-  // chrome.storage.local.remove(email);
-  // console.log(email);
   $('#deletekeyprop').empty()
-                  .append("<div> Do you want to remove public key of "+email+"</div>");
+                     .append("<div> Do you want to remove public key of "+email+"</div>");
   $('#deletekeymodal').modal({
-    onApprove: function(email) {
-      console.log(email);
+    onApprove: function() {
+      chrome.storage.local.remove(email);
+      pubkeyarr[email] = null;
+      var id = "#"+email.replace("@","-at-").replace(".","-dot-")+"-div";
+      $(id).remove();
+      window.alert('Public Key of '+email+' is removed Successfully');
     },
-    onDeny: function(email) {
-      console.log(email);
+    onDeny: function() {
+      $('#deletekeymodal').modal('hide');
     }
   }).modal('show');
-  // var id = "#"+email.replace("@","-at-").replace(".","-dot-")+"-div";
-  // $(id).remove();
-  // window.alert('Public Key of '+email+' is removed Successfully');
 }
 
 function showKeyProperty(email) {

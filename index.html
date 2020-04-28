@@ -125,6 +125,22 @@
 				          <div class= "ui error message"> </div>
              	    <div class="ui submit button primary" id="importkeybutton">Import</div>
 				        </div>
+                <!-- Warning for sendkey modal -->
+                <div id="sendkeymodal" class="ui modal tiny">
+                  <i class="close icon"></i>
+                  <div class="header">
+                    Confirmation
+                  </div>
+                  <div class="content">
+                    <div id="sendkeyprop">
+                    </div>
+                  </div>
+                  <div class="actions">
+                    <div class="ui cancel button">Cancel</div>
+                    <div class="ui approve button">Send</div>
+                  </div>
+                </div>
+                <!-- End modal -->
                 <!-- Properties modal for Displaying key to user -->
                 <div id="propmodal" class="ui modal tiny">
                   <i class="close icon"></i>
@@ -148,8 +164,11 @@
                     <div id="deletekeyprop">
                     </div>
                   </div>
-                  <div class="ui cancel button">Cancel</div>
-                  <div class="ui approve button">Delete</div>
+
+                  <div class="actions">
+                    <div class="ui cancel button">Cancel</div>
+                    <div class="ui approve button">Delete</div>
+                  </div>
                 </div>
                 <!-- End modal -->
               </div>
