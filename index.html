@@ -75,7 +75,7 @@
                 </div>
 
                 <!-- Warning modal for sending key to keyserver -->
-                <div id="keysendmodal" class="ui modal">
+                <div id="keysendmodal" class="ui modal tiny">
                   <i class="close icon"></i>
                   <div class="header">
                     Confirmation
@@ -135,40 +135,13 @@
           <div id="manage" class="ui segment keymodule" style="display: none">
             <div class="ui grid" style="justify-content: center;">
               <div class="thirteen wide column">
-                <div id="examplePriv" class="ui grid" style="align-items: center; border-bottom: .3px solid #d2d2d2;">
-                  <div class="eight wide column" style="display: flex;align-items: center;">
-                    <img height="30px" src="resources/images/privatekey.png" style="padding-right: 5px;">
-                    Joe Jonas (joejonas@mail.com)
-                  </div>
-                  <div class="one wide column">
-                    <button class="ui compact icon blue button" data-content="Send to Keyserver">
-                      <i class="cloud upload icon"></i>
-                    </button>
-                  </div>
-                  <div class="one wide column">
-                    <button class="ui compact icon blue button" data-content="Download Keypair">
-                      <i class="download icon"></i>
-                    </button>
-                  </div>
-                  <div class="one wide column">
-                    <button class="ui compact icon blue button" data-content="Download Revocation certificate" style="padding: .3rem">
-                      <img width="24px" height="21px" src="resources/images/cert.png">
-                    </button>
-                  </div>
-                  <div class="one wide column">
-                    <button class="ui compact icon red button" data-content="Revoke your key" style="padding: .3rem">
-                      <img width="20px" src="resources/images/revoke1.png">
-                    </button>
-                  </div>
-                  <div class="one wide column">
-                    <button class="ui compact icon yellow button" data-content="See properties">
-                      <i class="list alternate white icon"></i>
-                    </button>
-                  </div>
-                </div>
-                <div class="ui header center" style="margin-left: 7rem;">Your Keypairs</div>
+                <center>
+                  <div class="ui header center">Your Keypairs</div>
+                </center>
                 <div id="pubPrivEmail"></div>
-                <div class="ui header center" style="margin-left: 7rem;">Fetched Public keys</div>
+                <center>
+                  <div class="ui header center" style="margin-top:3rem;">Fetched Public keys</div>
+                </center>
                 <div id="pubEmail"></div>
               </div>
             </div>
@@ -245,6 +218,28 @@
                 <center>
                   <div class="ui header center">Sign your Message</div>
                 </center>
+                <div class="ui form" id="signform">
+                  <div class="field">
+                    <label>Select User</label>
+                    <div id="signUser" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="SignUser">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select User</div>
+                      <div id="pubRecipientList2" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Passphrase</label>
+                    <input name="Signpassphrase" type="password" placeholder="Enter passphrase for selected key" required>
+                  </div>
+                  <div class="field">
+                    <label>Message</label>
+                    <textarea name="SignMessage" id="SignMessage" placeholder="Enter Message here"></textarea>
+                  </div>
+                  <div class="ui error message"></div>
+                  <div class="ui submit button primary" id="Signsubmit">Sign</div>
+                </div>
               </div>
             </div>
           </div>
@@ -336,6 +331,24 @@
                 <center>
                   <div class="ui header center">Verify your Message</div>
                 </center>
+                <div class="ui form" id="verifyform">
+                  <div class="field">
+                    <label>Select Sender</label>
+                    <div id="pubSender" class="ui fluid search selection dropdown">
+                      <input type="hidden" name="sender">
+                      <i class="dropdown icon"></i>
+                      <input class="search" autocomplete="off" tabindex="0">
+                      <div class="default text">Select Sender</div>
+                      <div id="pubSenderList" class="menu" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Received Message</label>
+                    <textarea name="recMessage" id="recMessage" placeholder="Enter Message here"></textarea>
+                  </div>
+                  <div class="ui error message"></div>
+                  <div class="ui submit button primary" id="versubmit">Verify</div>
+                </div>
               </div>
             </div>
           </div>
