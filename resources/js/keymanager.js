@@ -185,7 +185,7 @@ function findKey() {
 	console.log('Clicked on Find button')
 	if( $('#findkeyform').form('is valid')) {
 		var email = $('input[name="findmail"]').val();
-		var hkp = new openpgp.HKP('https://keyserver.ubuntu.com/');
+		var hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
 		var options = {
 			query: email
 		};
@@ -227,9 +227,9 @@ async function importKey() {
 	}
 }
 
-function verifypubandsave(pubkey){
+async function verifypubandsave(pubkey){
 	try{
-		var pubKey = openpgp.key.readArmored(pubkey);
+		var pubKey = await openpgp.key.readArmored(pubkey);
 		var userid = pubKey['keys'][0]['users'][0].userId['userid'];
 		userid = userid.split(' ');
 		var name='';
@@ -251,14 +251,47 @@ function send(email) {
   window.alert(email)
 }
 
-function generatePrivElement(email, name, id) {
+function revoke(email) {
+  window.alert(email)
+}
+
+function deletePair(email) {
+  //only if revoked
+  window.alert(email)
+}
+
+function downloadCert(email) {
+  window.alert(email)
+}
+
+function downloadKeyPair(email) {
+  window.alert(email)
+}
+
+function showPairProperty(email) {
+  window.alert(email)
+}
+
+function downloadPubKey(email) {
+  window.alert(email)
+}
+
+function deletePubKey(email) {
+  window.alert(email)
+}
+
+function showKeyProperty(email) {
+  window.alert(email)
+}
+
+function generatePrivElement(email, name, id, sent, revoked) {
   return `<div class="ui grid keyItem" style="align-items: center; border-bottom: .3px solid #d2d2d2;">
     <div class="ten wide column" style="display: flex;align-items: center;">
       <img height="30px" src="resources/images/privatekey.png" style="padding-right: 5px;">
       ${name} (${email})
     </div>
     <div class="one wide column">
-      <button id="${id}-send" class="ui compact icon blue button" data-content="Send to Keyserver">
+      <button id="${id}-send" class="ui compact icon blue button" data-content="Send to Keyserver" style="display: ${sent? 'none': 'box'}">
         <i class="cloud upload icon"></i>
       </button>
     </div>
@@ -268,13 +301,16 @@ function generatePrivElement(email, name, id) {
       </button>
     </div>
     <div class="one wide column">
-      <button id="${id}-cert" class="ui compact icon blue button" data-content="Download Revocation certificate" style="padding: .3rem">
+      <button id="${id}-cert" class="ui compact icon blue button" data-content="Download Revocation certificate" style="padding: .3rem;">
         <img width="24px" height="20px" src="resources/images/cert.png">
       </button>
     </div>
     <div class="one wide column">
-      <button id="${id}-revoke" class="ui compact icon red button" data-content="Revoke your key" style="padding: .3rem .4rem">
+      <button id="${id}-revoke" class="ui compact icon red button" data-content="Revoke your key" style="padding: .3rem .4rem; display: ${revoked? 'none': 'box'}">
         <img width="20px" src="resources/images/revoke1.png">
+      </button>
+      <button id="${id}-remove" class="ui compact icon red button" data-content="Delete revoked key" style="display: ${revoked? 'box': 'none'}">
+        <i class="trash icon"></i>
       </button>
     </div>
     <div class="one wide column">
@@ -319,37 +355,6 @@ chrome.storage.local.get(function(keys) {
   var pubPrivList = document.getElementById("pubPrivEmail");
   for(var key in keys) {
     var id = key.replace('@','-at-').replace('.','-dot-');
-    // Set x button
-    xbutton = document.createElement("button");
-    xbutton.innerHTML = "&#10006;";
-    xbutton.style.display = "inline";
-    xbutton.style.margin = "5px";
-    xbutton.onclick = removeKey;
-    xbutton.id = id;
-    xbutton.className = "btn btn-danger btn-xs"
-
-    // Set edit button
-    //editButton = document.createElement("button");
-    // editButton.innerHTML = "&#9998;";
-    // editButton.style.display = "inline";
-    // editButton.style.margin = "5px";
-    //editButton.onclick = editKey;
-    // editButton.id = id;
-    // editButton.className = "btn btn-warning btn-xs"
-
-    // Set url
-    p = document.createElement('p');
-    p.style.display = "inline";
-    p.innerText += keys[key].name + " (" + key + ")";
-    p.id = id;
-
-    // Stick inside div
-    div = document.createElement("div")
-    div.appendChild(xbutton);
-    //div.appendChild(editButton);
-    //div.appendChild(exportButton);
-    div.id = id;
-    div.appendChild(p);
 
     if(keys[key].privKey == undefined) {
       var listItem = generatePubElement(key, keys[key].name, id);
@@ -358,8 +363,12 @@ chrome.storage.local.get(function(keys) {
 
       pubkeyarr.push(key);
       pubList.appendChild(container);
+
+      $(`#${id}-download`).click(downloadPubKey.bind(this, key));
+      $(`#${id}-remove`).click(deletePubKey.bind(this, key));
+      $(`#${id}-prop`).click(showKeyProperty.bind(this, key));
     } else {
-      var listItem = generatePrivElement(key, keys[key].name, id);
+      var listItem = generatePrivElement(key, keys[key].name, id, keys[key].sent, keys[key].revoked);
       var container = document.createElement("div");
       container.innerHTML = listItem;
 
@@ -367,6 +376,11 @@ chrome.storage.local.get(function(keys) {
       pubPrivList.appendChild(container);
 
       $(`#${id}-send`).click(send.bind(this, key));
+      $(`#${id}-revoke`).click(revoke.bind(this, key));
+      $(`#${id}-remove`).click(deletePair.bind(this, key));
+      $(`#${id}-cert`).click(downloadCert.bind(this, key));
+      $(`#${id}-download`).click(downloadKeyPair.bind(this, key));
+      $(`#${id}-prop`).click(showPairProperty.bind(this, key));
     }
   }
   console.log('pubkeyarr ',pubkeyarr);
