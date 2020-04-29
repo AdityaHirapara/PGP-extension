@@ -190,11 +190,22 @@ function verMessage(message, email) {
       };
       openpgp.verify(options).then(function(verifyMessage) {
         var verOutput = document.getElementById("verMsg");
+        var verStatus = $("#verStatus");
         verOutput.innerText = verifyMessage.data;
         $(".verMsg").show();
+        if (verifyMessage.signatures[0].valid) {
+          verStatus.html('<p>This message is verified!</p>');
+          verStatus.removeClass('negative');
+          verStatus.addClass('positive');
+        } else {
+          verStatus.html('<p>Caution: This message is not verified! Signature is invalid!</p>');
+          verStatus.removeClass('positive');
+          verStatus.addClass('negative');
+        }
+        $('#verStatus').slideDown();
       }).catch(e => window.alert("Error while verifying the message! message is corrupted."+e.message));
     } catch(e) {
-      window.alert("Invalid PGP digest!");
+      window.alert("Invalid Signature!");
     }
 	});
 }
