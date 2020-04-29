@@ -166,7 +166,7 @@ function storeKey(name, email, pubKey, primaryKey) {
     "algorithm": primaryKey.getAlgorithmInfo().algorithm,
     "size": primaryKey.getAlgorithmInfo().bits,
   };
-  
+
 	chrome.storage.local.set(details, function() {
 		console.log("Stored key at", email);
     $('#findkeybutton').removeClass('loading');
@@ -289,6 +289,8 @@ function send(email) {
                   .append("<div> Do you want to send public key of "+email+" to Keyserver?</div>");
   $('#sendkeymodal').modal({
     onApprove: function() {
+      var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-send";
+      $(id).addClass('loading');
       const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
       hkp.upload(pubprivkeyarr[email].pubKey).then(function(l) {
         if(l['status']==200){
@@ -297,13 +299,13 @@ function send(email) {
               details[k].sent = true;
               chrome.storage.local.remove(email);
               chrome.storage.local.set(details, function() {});
-              var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-send";
               $(id).hide();
               window.alert('Public Key sent Successfully'+k);
               break;
             }
           });
         }else{
+          $(id).removeClass('loading');
           console.log('Something Went wrong.!.Error code '+l['status'])
           window.alert('Something Went wrong uploading key to keysever! Check your connection and try again.');
         }
