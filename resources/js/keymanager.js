@@ -332,23 +332,35 @@ function revoke(email) {
           console.log(key)
           var pubkey = key.publicKeyArmored;
           console.log(pubkey)
-          const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
-          hkp.upload(pubkey).then(function(l) {
-            if(l['status']==200){
-              console.log(l)
-              details[email].revoked = true;
-              details[email].pubKey = pubkey;
-              chrome.storage.local.set(details, function() {
-                var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-revoke";
-                $(id).hide();
-                id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-remove";
-                $(id).show();
-                window.alert('Keypair revoked Successfully');
-              });
-            } else {
-              throw new Error();
-            }
-          }).catch(() => window.alert('Something Went wrong uploading revoked key to keysever! Check your connection and try again.'));
+          if (details[email].sent) {
+            const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
+            hkp.upload(pubkey).then(function(l) {
+              if(l['status']==200){
+                console.log(l)
+                details[email].revoked = true;
+                details[email].pubKey = pubkey;
+                chrome.storage.local.set(details, function() {
+                  var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-revoke";
+                  $(id).hide();
+                  id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-remove";
+                  $(id).show();
+                  window.alert('Keypair revoked Successfully');
+                });
+              } else {
+                throw new Error();
+              }
+            }).catch(() => window.alert('Something Went wrong uploading revoked key to keysever! Check your connection and try again.'));
+          } else {
+            details[email].revoked = true;
+            details[email].pubKey = pubkey;
+            chrome.storage.local.set(details, function() {
+              var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-revoke";
+              $(id).hide();
+              id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-remove";
+              $(id).show();
+              window.alert('Keypair revoked Successfully');
+            });
+          }
         }).catch(() => window.alert('Something went wrong! try again later'));
       });
     },
