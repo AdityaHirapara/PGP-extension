@@ -174,18 +174,30 @@ function verMessage(message, email) {
 	chrome.storage.local.get(email,async function(details){
 
 		const pubkey = (await openpgp.key.readArmored(details[email].pubKey)).keys[0];
-	    var options = {
+    var options = {
 			message: await openpgp.cleartext.readArmored(message),
 			publicKeys: pubkey
 		};
 		openpgp.verify(options).then(function(verifyMessage) {
-			console.log(verifyMessage.data);
-
+		  var verOutput = document.getElementById("verMsg");
+      verOutput.innerText = verifyMessage.data;
+      $(".verMsg").show();
 		});
 	});
 }
 
+$('.verMsg').click(function () {
+  var content = document.getElementById("verMsg").innerHTML;
+  var verifyMessage = content.replace(/<br>/g, "\n");
 
+  var $temp = $("<textarea>");
+  var brRegex = /<br\s*[\/]?>/gi;
+  $("body").append($temp);
+  $temp.val(verifyMessage).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $('#verCopyNotify').slideDown().delay(1000).slideUp();
+});
 
 //decrypt verifyTab
 
@@ -254,13 +266,12 @@ function decsignMessage(encsignedMessage, user, password,sender) {
   var pubkey;
   console.log("here");
   chrome.storage.local.get(sender,async function(details){
-
 		pubkey = (await openpgp.key.readArmored(details[sender].pubKey)).keys[0];
-
+  });
 
 	chrome.storage.local.get(user,async function(details){
 		const privateKey =(await openpgp.key.readArmored(details[user].privKey)).keys[0];
-console.log(privateKey);
+    console.log(privateKey);
 		decryptKey(privateKey, password).then(async function(decryptedKey){
       const decryptedkey = decryptedKey.key;
 			var option = {
@@ -269,8 +280,24 @@ console.log(privateKey);
         publicKeys: pubkey
 			};
 
-			console.log(await openpgp.decrypt(option).then(plaintext => plaintext.data))  ;
-		});
+			openpgp.decrypt(option).then(function(plaintext){
+        var decVerOutput = document.getElementById("decVerMsg");
+        decVerOutput.innerText = plaintext.data;
+        $(".decVerMsg").show();
+		  });
     });
-	});
+  });
 }
+
+$('.decVerMsg').click(function () {
+  var content = document.getElementById("decVerMsg").innerHTML;
+  var decryptVerifiedMessage = content.replace(/<br>/g, "\n");
+
+  var $temp = $("<textarea>");
+  var brRegex = /<br\s*[\/]?>/gi;
+  $("body").append($temp);
+  $temp.val(decryptVerifiedMessage).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $('#decVerCopyNotify').slideDown().delay(1000).slideUp();
+});

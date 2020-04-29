@@ -46,7 +46,7 @@ chrome.storage.local.get(function(keys) {
 
 
 });
-signform
+
 $('#encform')
   .form({
     fields: {
@@ -93,9 +93,9 @@ function encMessage(message, email) {
 
 		const pubkey =(await openpgp.key.readArmored(details[email].pubKey)).keys[0];
 
-	    var options = {
-			message: openpgp.message.fromText(message),
-			publicKeys: pubkey
+    var options = {
+		message: openpgp.message.fromText(message),
+		publicKeys: pubkey
 		};
 
 		openpgp.encrypt(options).then(function(encryptedMessage) {
@@ -178,16 +178,20 @@ function sign(message, email,password)
     const privKey = (await openpgp.key.readArmored(details[email].privKey)).keys[0];
     decryptKey(privKey, password).then(function(decryptedKey){
       const decryptedkey = decryptedKey.key;
-    var options = {
-    message: openpgp.message.fromText(message),
-    privateKeys: decryptedkey
-  };
-  openpgp.sign(options).then(function(signmessage) {
-    console.log(signmessage.data);
+      var options = {
+        message: openpgp.message.fromText(message),
+        privateKeys: decryptedkey
+      };
+      
+      openpgp.sign(options).then(function(signmessage) {
+        var signOutput = document.getElementById("signMsg");
+        signOutput.innerText = signmessage.data;
+        $(".signMsg").show();
       });
     });
   });
 }
+
 function decryptKey(privatekey, password) {
 	var options = {
 		privateKey: privatekey,
@@ -196,6 +200,19 @@ function decryptKey(privatekey, password) {
 
 	return openpgp.decryptKey(options);
 }
+
+$('.signMsg').click(function () {
+  var content = document.getElementById("signMsg").innerHTML;
+  var signedMessage = content.replace(/<br>/g, "\n");
+
+  var $temp = $("<textarea>");
+  var brRegex = /<br\s*[\/]?>/gi;
+  $("body").append($temp);
+  $temp.val(signedMessage).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $('#signCopyNotify').slideDown().delay(1000).slideUp();
+});
 
 
 
@@ -270,27 +287,45 @@ function encsignmessage()
   }
 }
 
-function encsign(message, sender,receiver,password){
+function encsign(message, sender,receiver,password) {
   var privKey;
   //var pubkey;
-  chrome.storage.local.get(sender,async function(details){
-     privKey = (await openpgp.key.readArmored(details[sender].privKey)).keys[0];
-
+  chrome.storage.local.get(sender,async function(details) {
+    privKey = (await openpgp.key.readArmored(details[sender].privKey)).keys[0];
   });
-  chrome.storage.local.get(receiver,async function(details){
-     const pubkey = (await openpgp.key.readArmored(details[receiver].pubKey)).keys[0];
 
-     decryptKey(privKey, password).then(function(decryptedKey){
-       const decryptedkey = decryptedKey.key;
-       var options = {
- 			message: openpgp.message.fromText(message),
- 			publicKeys: pubkey,
-      privateKeys: decryptedkey
- 		};
- 		openpgp.encrypt(options).then(function(encsignmessage) {
- 			console.log(encsignmessage.data);
-
- 		});
-     });
+  chrome.storage.local.get(receiver,async function(details) {
+    
+    const pubkey = (await openpgp.key.readArmored(details[receiver].pubKey)).keys[0];
+    
+    decryptKey(privKey, password).then(function(decryptedKey) {
+      
+      const decryptedkey = decryptedKey.key;
+      
+      var options = {
+ 			  message: openpgp.message.fromText(message),
+        publicKeys: pubkey,
+        privateKeys: decryptedkey
+      };
+      
+      openpgp.encrypt(options).then(function(encsignmessage) {
+ 			  var encSignOutput = document.getElementById("encSignMsg");
+        encSignOutput.innerText = encsignmessage.data;
+        $(".encSignMsg").show();
+      });
+    });
   });
 }
+
+$('.encSignMsg').click(function () {
+  var content = document.getElementById("encSignMsg").innerHTML;
+  var encryptSignedMessage = content.replace(/<br>/g, "\n");
+
+  var $temp = $("<textarea>");
+  var brRegex = /<br\s*[\/]?>/gi;
+  $("body").append($temp);
+  $temp.val(encryptSignedMessage).select();
+  document.execCommand("copy");
+  $temp.remove();
+  $('#encSignCopyNotify').slideDown().delay(1000).slideUp();
+});

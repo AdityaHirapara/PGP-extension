@@ -306,6 +306,13 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="Signsubmit">Sign</div>
+                  <div id='signCopyNotify' class="ui mini positive message" style="display: none">
+                    <p>Signed Message copied to clipboard</p>
+                  </div>
+                  <div class="field signMsg" style="display: none">
+                    <div class="ui header center">Signed Message (click to copy)</div>
+                    <textarea id="signMsg" readonly></textarea>
+                  </div>
                 </div>
               </div>
             </div>
@@ -351,6 +358,13 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="encSignsubmit">Encrypt and Sign</div>
+                  <div id='encSignCopyNotify' class="ui mini positive message" style="display: none">
+                    <p>Encrypted & Signed Message copied to clipboard</p>
+                  </div>
+                  <div class="field encSignMsg" style="display: none">
+                    <div class="ui header center">Encrypted & Signed Message (click to copy)</div>
+                    <textarea id="encSignMsg" readonly></textarea>
+                  </div>
                 </div>
               </div>
             </div>
@@ -455,6 +469,13 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="versubmit">Verify</div>
+                  <div id="verCopyNotify" class="ui mini positive message" style="display: none">
+                    <p>Verified Message copied to clipboard</p>
+                  </div>
+                  <div class="field vecMsg" style="display: none">
+                    <div class="ui header center">Verified Message (click to copy)</div>
+                    <textarea id="vecMsg" readonly></textarea>
+                  </div>
                 </div>
               </div>
             </div>
@@ -498,7 +519,14 @@
                     <textarea name="encryptedsignMessage" id="encryptedsignMessage" placeholder="Enter Encypted Signed Message here"></textarea>
                   </div>
                   <div class="ui error message"></div>
-                  <div class="ui submit button primary" id="decsignsubmit">Decrypt</div>
+                  <div class="ui submit button primary" id="decsignsubmit">Decrypt and Verify</div>
+                  <div id="decVecCopyNotify" class="ui mini positive message" style="display: none">
+                    <p>Decrypted Verified Message copied to clipboard</p>
+                  </div>
+                  <div class="field decVecMsg" style="display: none">
+                    <div class="ui header center">decrypted & Verified Message (click to copy)</div>
+                    <textarea id="decVecMsg" readonly></textarea>
+                  </div>
                 </div>
               </div>
             </div>
