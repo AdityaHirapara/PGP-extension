@@ -188,7 +188,7 @@ function sign(message, email,password)
     decryptKey(privKey, password).then(function(decryptedKey){
       const decryptedkey = decryptedKey.key;
       var options = {
-        message: openpgp.message.fromText(message),
+        message: openpgp.cleartext.fromText(message),
         privateKeys: decryptedkey
       };
       
