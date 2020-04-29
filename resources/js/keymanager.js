@@ -190,17 +190,13 @@ function findKey() {
         hkp.lookup(options).then(async function(key) {
           var publicKey = await openpgp.key.readArmored(key);
           console.log(publicKey)
-          if (publicKey.keys.length > 1) {
-
-          } else {
-            var userid = publicKey['keys'][0]['users'][0].userId['userid'].split(' ');
-            var name='';
-            for (i = 0; i < userid.length-1; i++) {
-              name += userid[i] + " ";
-            }
-            storeKey(name, email, key, publicKey.keys[0].primaryKey);
-            alert('Key added Successfully');
+          var userid = publicKey['keys'][0]['users'][0].userId['userid'].split(' ');
+          var name='';
+          for (i = 0; i < userid.length-1; i++) {
+            name += userid[i] + " ";
           }
+          storeKey(name, email, key, publicKey.keys[0].primaryKey);
+          alert('Key added Successfully');
         }).catch(e => {
           if (e.message == 'Not found') {
             window.alert('Keyserver having trouble looking for ' + email);
