@@ -92,17 +92,26 @@ function decMessage(encMessage, email, password) {
 
 		decryptKey(privateKey, password).then(async function(decryptedKey){
       const decryptedkey = decryptedKey.key;
-			var option = {
-				message: await openpgp.message.readArmored(encMessage),
-				privateKeys: decryptedkey
-			};
+      try {
+        var option = {
+          message: await openpgp.message.readArmored(encMessage),
+          privateKeys: decryptedkey
+        };
+      } catch(e) {
+        throw new Error("cipher");
+      }
 
 			openpgp.decrypt(option).then(function(output){
         var decOutput = document.getElementById("decMsg");
         decOutput.innerText = output.data;
         $(".decMsg").show();
-			});
-		});
+      }).catch(e => window.alert("Error occured while decrypting the cipher! cipher is corrupted."));
+    }).catch(e => {
+      if (e.message == 'cipher') {
+        return window.alert("Invalid PGP cipher!");
+      }
+      window.alert("Invalid passphrase!");
+    });
 	});
 }
 
@@ -173,16 +182,20 @@ function verMessage(message, email) {
 
 	chrome.storage.local.get(email,async function(details){
 
-		const pubkey = (await openpgp.key.readArmored(details[email].pubKey)).keys[0];
-    var options = {
-			message: await openpgp.cleartext.readArmored(message),
-			publicKeys: pubkey
-		};
-		openpgp.verify(options).then(function(verifyMessage) {
-		  var verOutput = document.getElementById("verMsg");
-      verOutput.innerText = verifyMessage.data;
-      $(".verMsg").show();
-		});
+    const pubkey = (await openpgp.key.readArmored(details[email].pubKey)).keys[0];
+    try {
+      var options = {
+        message: await openpgp.cleartext.readArmored(message),
+        publicKeys: pubkey
+      };
+      openpgp.verify(options).then(function(verifyMessage) {
+        var verOutput = document.getElementById("verMsg");
+        verOutput.innerText = verifyMessage.data;
+        $(".verMsg").show();
+      }).catch(e => window.alert("Error while verifying the message! message is corrupted."+e.message));
+    } catch(e) {
+      window.alert("Invalid PGP digest!");
+    }
 	});
 }
 
@@ -274,18 +287,22 @@ function decsignMessage(encsignedMessage, user, password,sender) {
     console.log(privateKey);
 		decryptKey(privateKey, password).then(async function(decryptedKey){
       const decryptedkey = decryptedKey.key;
-			var option = {
-				message:await openpgp.message.readArmored(encsignedMessage),
-				privateKeys: decryptedkey,
-        publicKeys: pubkey
-			};
+      try{
+        var option = {
+          message:await openpgp.message.readArmored(encsignedMessage),
+          privateKeys: decryptedkey,
+          publicKeys: pubkey
+        };
+      } catch(e) {
+        window.alert("Invalid PGP cipher!");
+      }
 
 			openpgp.decrypt(option).then(function(plaintext){
         var decVerOutput = document.getElementById("decVerMsg");
         decVerOutput.innerText = plaintext.data;
         $(".decVerMsg").show();
-		  });
-    });
+      }).catch(e => window.alert("Error occured while decrypting the cipher! cipher is corrupted."));
+    }).catch(e => window.alert("Invalid passphrase!"));
   });
 }
 

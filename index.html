@@ -56,7 +56,9 @@
           <div id="genkey" class="ui segment keymodule">
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
-                <div class="ui header center" style="margin-left: 7rem;">Generate your Keypair</div>
+                <center>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Generate your Keypair</div>
+                </center>
                 <div class="ui form" id="genkeyform">
                   <div class="field">
                     <label>Name</label>
@@ -99,7 +101,9 @@
           <div id="find" class="ui segment keymodule" style="display: none">
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
-                <div class="ui header center" style="margin-left: 7rem;">Find keys</div>
+                <center>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Find keys</div>
+                </center>
                 <div class="ui form" id="findkeyform">
                   <div class="field">
                     <label>E-mail</label>
@@ -110,7 +114,9 @@
                 </div>
               </div>
 			        <div class="ten wide column">
-                <div class="ui header center" style="margin-left: 7rem;">Import Key</div>
+                <center>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Import Key</div>
+                </center>
                 <div class="ui form" id="importkeyform">
                   <div class="field">
                     <label>Public Key</label>
@@ -246,7 +252,7 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <center>
-                  <div class="ui header center">Encrypt your Message</div>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Encrypt your Message</div>
                 </center>
                 <div class="ui form" id="encform">
                   <div class="field">
@@ -265,10 +271,10 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="encsubmit">Encrypt</div>
-                  <div id='encCopyNotify' class="ui mini positive message" style="display: none">
+                  <div id='encCopyNotify' class="ui mini positive message" style="display: none; margin-top: 1rem;">
                     <p>Encrypted Message copied to clipboard</p>
                   </div>
-                  <div class="field encMsg" style="display: none">
+                  <div class="field encMsg" style="display: none; margin-top: 1rem;">
                     <div class="ui header center">Encrypted Message (click to copy)</div>
                     <textarea id="encMsg" readonly></textarea>
                   </div>
@@ -283,7 +289,7 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <center>
-                  <div class="ui header center">Sign your Message</div>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Sign your Message</div>
                 </center>
                 <div class="ui form" id="signform">
                   <div class="field">
@@ -306,10 +312,10 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="Signsubmit">Sign</div>
-                  <div id='signCopyNotify' class="ui mini positive message" style="display: none">
+                  <div id='signCopyNotify' class="ui mini positive message" style="display: none; margin-top: 1rem;">
                     <p>Signed Message copied to clipboard</p>
                   </div>
-                  <div class="field signMsg" style="display: none">
+                  <div class="field signMsg" style="display: none; margin-top: 1rem;">
                     <div class="ui header center">Signed Message (click to copy)</div>
                     <textarea id="signMsg" readonly></textarea>
                   </div>
@@ -324,7 +330,7 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <center>
-                  <div class="ui header center">Encrypt & Sign your Message</div>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Encrypt & Sign your Message</div>
                 </center>
                 <div class="ui form" id="encsignform">
                   <div class="field">
@@ -358,10 +364,10 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="encSignsubmit">Encrypt and Sign</div>
-                  <div id='encSignCopyNotify' class="ui mini positive message" style="display: none">
+                  <div id='encSignCopyNotify' class="ui mini positive message" style="display: none; margin-top: 1rem;">
                     <p>Encrypted & Signed Message copied to clipboard</p>
                   </div>
-                  <div class="field encSignMsg" style="display: none">
+                  <div class="field encSignMsg" style="display: none; margin-top: 1rem;">
                     <div class="ui header center">Encrypted & Signed Message (click to copy)</div>
                     <textarea id="encSignMsg" readonly></textarea>
                   </div>
@@ -409,7 +415,7 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <center>
-                  <div class="ui header center">Decrypt your Message</div>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Decrypt your Message</div>
                 </center>
                 <div class="ui form" id="decform">
                   <div class="field">
@@ -432,10 +438,10 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="decsubmit">Decrypt</div>
-                  <div id="decCopyNotify" class="ui mini positive message" style="display: none">
+                  <div id="decCopyNotify" class="ui mini positive message" style="display: none; margin-top: 1rem;">
                     <p>Message copied to clipboard</p>
                   </div>
-                  <div class="field decMsg" style="display: none">
+                  <div class="field decMsg" style="display: none; margin-top: 1rem;">
                     <div class="ui header center">decrypted Message (click to copy)</div>
                     <textarea id="decMsg" readonly></textarea>
                   </div>
@@ -450,7 +456,7 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <center>
-                  <div class="ui header center">Verify your Message</div>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Verify your Message</div>
                 </center>
                 <div class="ui form" id="verifyform">
                   <div class="field">
@@ -469,12 +475,12 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="versubmit">Verify</div>
-                  <div id="verCopyNotify" class="ui mini positive message" style="display: none">
+                  <div id="verCopyNotify" class="ui mini positive message" style="display: none; margin-top: 1rem;">
                     <p>Verified Message copied to clipboard</p>
                   </div>
-                  <div class="field vecMsg" style="display: none">
+                  <div class="field verMsg" style="display: none; margin-top: 1rem;">
                     <div class="ui header center">Verified Message (click to copy)</div>
-                    <textarea id="vecMsg" readonly></textarea>
+                    <textarea id="verMsg" readonly></textarea>
                   </div>
                 </div>
               </div>
@@ -487,7 +493,7 @@
             <div class="ui grid" style="justify-content: center;">
               <div class="ten wide column">
                 <center>
-                  <div class="ui header center">Decrypt & Verify your Message</div>
+                  <div class="ui header center" style="margin-bottom: 1rem;">Decrypt & Verify your Message</div>
                 </center>
                 <div class="ui form" id="decverform">
                   <div class="field">
@@ -520,12 +526,12 @@
                   </div>
                   <div class="ui error message"></div>
                   <div class="ui submit button primary" id="decsignsubmit">Decrypt and Verify</div>
-                  <div id="decVecCopyNotify" class="ui mini positive message" style="display: none">
+                  <div id="decVerCopyNotify" class="ui mini positive message" style="display: none; margin-top: 1rem;">
                     <p>Decrypted Verified Message copied to clipboard</p>
                   </div>
-                  <div class="field decVecMsg" style="display: none">
+                  <div class="field decVerMsg" style="display: none; margin-top: 1rem;">
                     <div class="ui header center">decrypted & Verified Message (click to copy)</div>
-                    <textarea id="decVecMsg" readonly></textarea>
+                    <textarea id="decVerMsg" readonly></textarea>
                   </div>
                 </div>
               </div>

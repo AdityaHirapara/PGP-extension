@@ -90,19 +90,28 @@ function encryptMessage() {
 function encMessage(message, email) {
 
 	chrome.storage.local.get(email,async function(details){
+    try {
+      const pubkey =(await openpgp.key.readArmored(details[email].pubKey)).keys[0];
 
-		const pubkey =(await openpgp.key.readArmored(details[email].pubKey)).keys[0];
-
-    var options = {
-		message: openpgp.message.fromText(message),
-		publicKeys: pubkey
-		};
-
-		openpgp.encrypt(options).then(function(encryptedMessage) {
-      var encOutput = document.getElementById("encMsg");
-      encOutput.innerText = encryptedMessage.data;
-      $(".encMsg").show();
-		});
+      var options = {
+        message: openpgp.message.fromText(message),
+        publicKeys: pubkey
+      };
+    } catch(e) {
+      console.log(e.message);
+      window.alert("Error occured while reading public key!");
+    }
+      openpgp.encrypt(options).then(function(encryptedMessage) {
+        var encOutput = document.getElementById("encMsg");
+        encOutput.innerText = encryptedMessage.data;
+        $(".encMsg").show();
+      }).catch((e) => {
+        if (e.message) {
+          window.alert("Error: " + e.message)
+        } else {
+          window.alert("Error occured while encrypting message!");
+        }
+      });
 	});
 }
 
@@ -187,8 +196,8 @@ function sign(message, email,password)
         var signOutput = document.getElementById("signMsg");
         signOutput.innerText = signmessage.data;
         $(".signMsg").show();
-      });
-    });
+      }).catch(e => window.alert("Error occured while signing the message!"));
+    }).catch(e => window.alert("Invalid passphrase!"));
   });
 }
 
@@ -312,8 +321,8 @@ function encsign(message, sender,receiver,password) {
  			  var encSignOutput = document.getElementById("encSignMsg");
         encSignOutput.innerText = encsignmessage.data;
         $(".encSignMsg").show();
-      });
-    });
+      }).catch(e => window.alert("Error occured while encryption and signing the message!"));
+    }).catch(e => window.alert("Invalid passphrase!"));
   });
 }
 
