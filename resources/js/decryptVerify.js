@@ -105,7 +105,7 @@ function decMessage(encMessage, email, password) {
         var decOutput = document.getElementById("decMsg");
         decOutput.innerText = output.data;
         $(".decMsg").show();
-      }).catch(e => window.alert("Error occured while decrypting the cipher! cipher is corrupted."));
+      }).catch(e => window.alert("Error occured while decrypting the cipher!"));
     }).catch(e => {
       if (e.message == 'cipher') {
         return window.alert("Invalid PGP cipher!");
@@ -203,7 +203,7 @@ function verMessage(message, email) {
           verStatus.addClass('negative');
         }
         $('#verStatus').slideDown();
-      }).catch(e => window.alert("Error while verifying the message! message is corrupted."+e.message));
+      }).catch(e => window.alert("Error while verifying the message! message is corrupted."));
     } catch(e) {
       window.alert("Invalid Signature!");
     }
@@ -310,9 +310,20 @@ function decsignMessage(encsignedMessage, user, password,sender) {
 
 			openpgp.decrypt(option).then(function(plaintext){
         var decVerOutput = document.getElementById("decVerMsg");
+        var verStatus = $("#decverStatus");
         decVerOutput.innerText = plaintext.data;
         $(".decVerMsg").show();
-      }).catch(e => window.alert("Error occured while decrypting the cipher! cipher is corrupted."));
+        if (plaintext.signatures[0].valid) {
+          verStatus.html('<p>This message is verified!</p>');
+          verStatus.removeClass('negative');
+          verStatus.addClass('positive');
+        } else {
+          verStatus.html('<p>Caution: This message is not verified! Signature is invalid!</p>');
+          verStatus.removeClass('positive');
+          verStatus.addClass('negative');
+        }
+        $('#decverStatus').slideDown();
+      }).catch(e => window.alert("Error occured while decrypting the cipher!"));
     }).catch(e => window.alert("Invalid passphrase!"));
   });
 }
