@@ -32582,12 +32582,16 @@ HKP.prototype.lookup = function (options) {
   return fetch(proxyUrl + uri).then(function (response) {
     if (response.status === 200) {
       return response.text();
+    } else {
+      throw new Error('Not found');
     }
   }).then(function (publicKeyArmored) {
     if (!publicKeyArmored || publicKeyArmored.indexOf('-----END PGP PUBLIC KEY BLOCK-----') < 0) {
       return;
     }
     return publicKeyArmored.trim();
+  }).catch(e => {
+    throw new Error(e.message)
   });
 };
 

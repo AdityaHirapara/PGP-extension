@@ -60,7 +60,7 @@ function newKeyPair(name, email, password) {
            key.privateKeyArmored,
            key.revocationCertificate,
            key.key.primaryKey);
-	});
+  }).catch(() => window.alert('Something went wrong while generating key! try again'));
 }
 
 async function storeKeyPair(name, email, pubKey, privKey, revCert, primaryKey) {
@@ -85,11 +85,15 @@ async function storeKeyPair(name, email, pubKey, privKey, revCert, primaryKey) {
         $('#sendmodalbutton').addClass('loading');
         const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
         hkp.upload(pubKey).then(function(l) {
-          details[email].sent = true;
-          chrome.storage.local.set(details, function() {
-            window.location.reload();
-          });
-        });
+          if (l.status == 200) {
+            details[email].sent = true;
+            chrome.storage.local.set(details, function() {
+              window.location.reload();
+            });
+          } else {
+            throw new Error();
+          }
+        }).catch(() => window.alert('Error occured while uploading key! check your connection and try again.'));
       },
       onDeny: function() {
         window.location.reload();
@@ -105,7 +109,15 @@ function generateKeys() {
     const passphrase = $('input[name="genpassphrase"]').val();
 
     $('#gensubmit').addClass('loading');
-    newKeyPair(name, email, passphrase);
+    chrome.storage.local.get(email, function(details) {
+      if (!details[email]) {
+        newKeyPair(name, email, passphrase);
+      } else {
+        window.alert('Sorry! Muliple keys with one email is not allowed!');
+        $('#gensubmit').removeClass('loading');
+        $('#genkeyform').form('clear')
+      }
+    })
   }
 }
 
@@ -166,26 +178,44 @@ function storeKey(name, email, pubKey, primaryKey) {
 
 function findKey() {
 	console.log('Clicked on Find button')
-	if( $('#findkeyform').form('is valid')) {
+	if($('#findkeyform').form('is valid')) {
     var email = $('input[name="findmail"]').val();
     $('#findkeybutton').addClass('loading');
+    chrome.storage.local.get(email, function(details) {
+      if (!details[email]) {
+        var hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
+        var options = {
+          query: email
+        };
+        hkp.lookup(options).then(async function(key) {
+          var publicKey = await openpgp.key.readArmored(key);
+          console.log(publicKey)
+          if (publicKey.keys.length > 1) {
 
-		var hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
-		var options = {
-			query: email
-		};
-		hkp.lookup(options).then(async function(key) {
-      var publicKey = await openpgp.key.readArmored(key);
-      console.log(key)
-			var userid = publicKey['keys'][0]['users'][0].userId['userid'].split(' ');
-			var name='';
-			for (i = 0; i < userid.length-1; i++) {
-				name += userid[i] + " ";
+          } else {
+            var userid = publicKey['keys'][0]['users'][0].userId['userid'].split(' ');
+            var name='';
+            for (i = 0; i < userid.length-1; i++) {
+              name += userid[i] + " ";
+            }
+            storeKey(name, email, key, publicKey.keys[0].primaryKey);
+            alert('Key added Successfully');
+          }
+        }).catch(e => {
+          if (e.message == 'Not found') {
+            window.alert('Keyserver having trouble looking for ' + email);
+          } else {
+            window.alert('Something went wrong while fetching key');
+          }
+          $('#findkeybutton').removeClass('loading');
+          $('#findkeyform').form('clear');
+        });
+      } else {
+        window.alert('Sorry! Muliple keys with one email is not allowed!');
+        $('#findkeybutton').removeClass('loading');
+        $('#findkeyform').form('clear');
       }
-			storeKey(name, email, key, publicKey.keys[0].primaryKey);
-      alert('Key added Successfully');
-
-		});
+    })
 	}
 }
 
@@ -209,7 +239,7 @@ document.getElementById('files').addEventListener('change', handleFileSelect, fa
 async function importKey() {
 	console.log('Clicked on Import Public Key button')
 	if( $('#importkeyform').form('is valid')) {
-		var publickey = $.trim($("textarea").val());
+    var publickey = $.trim($("textarea").val());
 		verifypubandsave(publickey);
 	}
 }
@@ -225,9 +255,16 @@ async function verifypubandsave(pubkey){
 		}
 		email = userid[userid.length-1].replace('<', '').replace('>', '');
 		console.log('Name from public key: ',name);
-		console.log('Email from public key: ',email);
-		storeKey(name, email, key, pubKey.keys[0].primaryKey);
-		alert('Your Public Key stored Successfully');
+    console.log('Email from public key: ',email);
+    chrome.storage.local.get(email, function(details) {
+      if (!details[email]) {
+		    storeKey(name, email, key, pubKey.keys[0].primaryKey);
+        alert('Your Public Key stored Successfully');
+      } else {
+        window.alert('Sorry! Muliple keys with one email is not allowed!');
+        $('#importkeyform').form('clear')
+      }
+    });
 	}catch(err){
 		alert('Invalid Public Key');
 	}
@@ -271,8 +308,11 @@ function send(email) {
             }
           });
         }else{
-          console.log('Something Went wrong.!.Error code'+l['status'])
+          console.log('Something Went wrong.!.Error code '+l['status'])
+          window.alert('Something Went wrong uploading key to keysever! Check your connection and try again.');
         }
+      }).catch(() => {
+        window.alert('Something Went wrong! try again later.');
       });
     },
     onDeny: function() {
@@ -296,19 +336,22 @@ function revoke(email) {
           console.log(pubkey)
           const hkp = new openpgp.HKP('https://keyserver.ubuntu.com');
           hkp.upload(pubkey).then(function(l) {
-            console.log(l)
-            details[email].revoked = true;
-            details[email].pubKey = pubkey;
-            chrome.storage.local.set(details, function() {
-              // window.location.reload();
-              var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-revoke";
-              $(id).hide();
-              id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-remove";
-              $(id).show();
-              window.alert('Keypair revoked Successfully');
-            });
-          });
-        });
+            if(l['status']==200){
+              console.log(l)
+              details[email].revoked = true;
+              details[email].pubKey = pubkey;
+              chrome.storage.local.set(details, function() {
+                var id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-revoke";
+                $(id).hide();
+                id = '#'+email.replace('@','-at-').replace('.','-dot-')+"-remove";
+                $(id).show();
+                window.alert('Keypair revoked Successfully');
+              });
+            } else {
+              throw new Error();
+            }
+          }).catch(() => window.alert('Something Went wrong uploading revoked key to keysever! Check your connection and try again.'));
+        }).catch(() => window.alert('Something went wrong! try again later'));
       });
     },
   }).modal('show');
